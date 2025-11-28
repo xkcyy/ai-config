@@ -1,3 +1,15 @@
+Metadata-Version: 2.4
+Name: ai-config-tool
+Version: 0.1.0
+Summary: Sync and push AI IDE configs for Claude / Code Cursor
+Author: ai-coder-extends maintainers
+Keywords: ai,ide,config,claude,code-cursor
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+
 # ai-coder-extends
 
 ## AI 配置同步 & 推送工具
