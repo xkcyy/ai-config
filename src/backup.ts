@@ -1,7 +1,20 @@
 import { promises as fs } from 'fs';
 import { join, resolve } from 'path';
-import { format } from 'date-fns';
 import { SupportedDirectory } from './constants';
+
+/**
+ * Format date to YYYYMMDD-HHmmss
+ */
+function formatDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${year}${month}${day}-${hours}${minutes}${seconds}`;
+}
 
 /**
  * Create timestamped backup for provided directories
@@ -10,10 +23,7 @@ export async function createBackup(
   targetPath: string,
   directories: SupportedDirectory[]
 ): Promise<string | null> {
-  const timestamp = format(
-    new Date(),
-    'yyyyMMdd-HHmmss'
-  );
+  const timestamp = formatDate(new Date());
 
   const backupRoot = join(targetPath, '.ai-config-backup', timestamp);
   let copied = false;
