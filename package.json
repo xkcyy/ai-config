@@ -10,8 +10,7 @@
     "build": "tsc",
     "dev": "ts-node src/cli.ts",
     "start": "node dist/cli.js",
-    "test": "node dist/test.js",
-    "postinstall": "npm run build"
+    "test": "node dist/test.js"
   },
   "keywords": ["ai", "ide", "config", "claude", "code-cursor", "sync", "git"],
   "author": "ai-coder-extends maintainers",
