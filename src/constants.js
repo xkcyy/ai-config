@@ -3,7 +3,7 @@
  */
 
 // Supported IDE directories
-module.exports.SUPPORTED_DIRECTORIES = new Set(['.claude', '.cursor']);
+module.exports.SUPPORTED_DIRECTORIES = new Set(['.claude', '.cursor', '.ai']);
 
 // Default git branch
 module.exports.DEFAULT_BRANCH = 'main';
