@@ -4,7 +4,7 @@
   "description": "Sync and push AI IDE configs for Claude / Code Cursor",
   "main": "dist/index.js",
   "bin": {
-    "ai-config": "ai-config.ps1"
+    "ai-config": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
