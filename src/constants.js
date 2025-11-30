@@ -9,7 +9,7 @@ export const SUPPORTED_DIRECTORIES = new Set(['.claude', '.cursor']);
 export const DEFAULT_BRANCH = 'main';
 
 // Default remote directory for configs
-export const DEFAULT_REMOTE_DIR = 'ai';
+export const DEFAULT_REMOTE_DIR = 'remote-config/ai';
 
 // Default repository URL (replace with your actual repo URL)
 export const DEFAULT_REPO_URL = 'https://github.com/xkcyy/ai-config.git';
