@@ -40,7 +40,6 @@
     "README.md",
     "LICENSE",
     "package.json",
-    "ai-config",
     "remote-config/ai/",
     "cli.js"
   ]
