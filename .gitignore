@@ -1,7 +1,7 @@
-# Dependencies
-node_modules/
+# Dependencies (keep for user installation)
+# node_modules/
 
-# Build outputs (optional: keep dist for npm publishing users)
+# Build outputs (keep dist for npm publishing users)
 # dist/
 
 # Logs

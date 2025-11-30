@@ -42,6 +42,7 @@
     "LICENSE",
     "package.json",
     "ai-config",
-    "remote-config/ai/"
+    "remote-config/ai/",
+    "node_modules/"
   ]
 }
