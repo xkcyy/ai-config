@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+
+# Build outputs (optional: keep dist for npm publishing users)
+# dist/
+
+# Logs
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local configurations
+.claude/settings.local.json
+
+# Backup directories
+.ai-config-backup/
+
+# Remote config cache
+remote-config/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Package files
+*.tgz
+*.tar.gz
+
+# Test configurations
+test-config/
+
+# Python original files (keeping for reference)
+ai_config_tool/
+*.py
+setup.py
+pyproject.toml
+
+# Development files
+.env
+.env.local
+.env.*.local

@@ -1,2 +1,0 @@
-[console_scripts]
-ai-config = ai_config_tool.cli:main
