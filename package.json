@@ -1,6 +1,6 @@
 {
   "name": "ai-config",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sync and push AI IDE configs for Claude / Code Cursor",
   "main": "dist/index.js",
   "bin": {
@@ -13,7 +13,15 @@
     "test": "node dist/test.js",
     "prepack": "npm run build"
   },
-  "keywords": ["ai", "ide", "config", "claude", "code-cursor", "sync", "git"],
+  "keywords": [
+    "ai",
+    "ide",
+    "config",
+    "claude",
+    "code-cursor",
+    "sync",
+    "git"
+  ],
   "author": "ai-coder-extends maintainers",
   "license": "MIT",
   "dependencies": {
