@@ -4,15 +4,14 @@
   "description": "Sync and push AI IDE configs for Claude / Code Cursor",
   "main": "dist/index.js",
   "bin": {
-    "ai-config": "./dist/cli.js"
+    "ai-config": "./cli-entry.js"
   },
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src/cli.ts",
     "start": "node dist/cli.js",
     "test": "node dist/test.js",
-    "prepack": "npm run build",
-    "postinstall": "node build-after-install.js"
+    "prepack": "npm run build"
   },
   "keywords": ["ai", "ide", "config", "claude", "code-cursor", "sync", "git"],
   "author": "ai-coder-extends maintainers",
@@ -44,6 +43,6 @@
     "ai-config",
     "remote-config/ai/",
     "tsconfig.json",
-    "build-after-install.js"
+    "cli-entry.js"
   ]
 }
