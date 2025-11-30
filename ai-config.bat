@@ -1,2 +1,2 @@
 @echo off
-node "%~dp0\dist\cli.js" %*
+node "%~dp0\..\node_modules\ai-config\dist\cli.js" %*
