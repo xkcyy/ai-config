@@ -11,7 +11,8 @@
     "dev": "ts-node src/cli.ts",
     "start": "node dist/cli.js",
     "test": "node dist/test.js",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "postinstall": "node build-after-install.js"
   },
   "keywords": ["ai", "ide", "config", "claude", "code-cursor", "sync", "git"],
   "author": "ai-coder-extends maintainers",
@@ -35,11 +36,14 @@
     "url": "https://github.com/xkcyy/ai-config/issues"
   },
   "files": [
+    "src/",
     "dist/",
     "README.md",
     "LICENSE",
     "package.json",
     "ai-config",
-    "remote-config/ai/"
+    "remote-config/ai/",
+    "tsconfig.json",
+    "build-after-install.js"
   ]
 }
