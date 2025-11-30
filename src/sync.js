@@ -83,7 +83,7 @@ async function planNeedsChange(plan) {
 /**
  * Describe the sync plan for logging
  */
-exports.describePlan = function describePlan(plan) {
+function describePlan(plan) {
   if (!plan.source) {
     if (plan.removed.length > 0) {
       console.log(`Directory ${plan.name} missing in remote. ${plan.removed.length} files would be removed.`);

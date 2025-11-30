@@ -2,8 +2,8 @@
  * Backup utilities for the AI Config Tool
  */
 
-import { promises as fs } from 'fs';
-import { join, resolve } from 'path';
+const { promises: fs } = require('fs');
+const { join, resolve } = require('path');
 
 /**
  * Format date to YYYYMMDD-HHmmss
@@ -22,7 +22,7 @@ function formatDate(date) {
 /**
  * Create timestamped backup for provided directories
  */
-export async function createBackup(
+async function createBackup(
   targetPath,
   directories
 ) {
@@ -61,7 +61,7 @@ export async function createBackup(
 /**
  * Restore directories from backup snapshot
  */
-export async function rollbackSnapshot(
+async function rollbackSnapshot(
   targetPath,
   timestamp,
   directories
@@ -120,3 +120,6 @@ async function copyDirectory(src, dest) {
     }
   }
 }
+
+module.exports.createBackup = createBackup;
+module.exports.rollbackSnapshot = rollbackSnapshot;

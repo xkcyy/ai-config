@@ -2,15 +2,15 @@
  * Git utilities for the AI Config Tool
  */
 
-import { execSync } from 'child_process';
-import { existsSync, mkdirSync } from 'fs';
-import { join, resolve, relative as pathRelative } from 'path';
-import simpleGit from 'simple-git';
+const { execSync } = require('child_process');
+const { existsSync, mkdirSync } = require('fs');
+const { join, resolve, relative: pathRelative } = require('path');
+const simpleGit = require('simple-git');
 
 /**
  * Run git command and return result
  */
-export async function runGit(args, cwd) {
+async function runGit(args, cwd) {
   const git = simpleGit(cwd);
 
   try {
@@ -24,7 +24,7 @@ export async function runGit(args, cwd) {
 /**
  * Clone a repository with options
  */
-export async function cloneRepo(options) {
+async function cloneRepo(options) {
   const { repoUrl, destination, branch, ref, depth } = options;
 
   // Ensure parent directory exists
@@ -70,7 +70,7 @@ export async function cloneRepo(options) {
 /**
  * Get git repository root for a path
  */
-export async function getRepoRoot(path) {
+async function getRepoRoot(path) {
   try {
     const git = simpleGit(path);
     const result = await git.revparse(['--show-toplevel']);
@@ -83,7 +83,7 @@ export async function getRepoRoot(path) {
 /**
  * Check if directories have uncommitted changes
  */
-export async function hasUncommittedChanges(
+async function hasUncommittedChanges(
   targetPath,
   directories
 ) {
@@ -134,3 +134,8 @@ function relative(target, base) {
 
   return targetAbs;
 }
+
+module.exports.runGit = runGit;
+module.exports.cloneRepo = cloneRepo;
+module.exports.getRepoRoot = getRepoRoot;
+module.exports.hasUncommittedChanges = hasUncommittedChanges;

@@ -2,16 +2,16 @@
  * Utility functions for the AI Config Tool
  */
 
-import { existsSync, mkdirSync, rmSync, copyFileSync, readdirSync, statSync, promises as fs } from 'fs';
-import { join, dirname, relative } from 'path';
-import { createHash } from 'crypto';
+const { existsSync, mkdirSync, rmSync, copyFileSync, readdirSync, statSync, promises: fs } = require('fs');
+const { join, dirname, relative } = require('path');
+const { createHash } = require('crypto');
 
 /**
  * Check if a directory is empty
  * @param {string} dirPath - Directory path to check
  * @returns {boolean} True if directory is empty, false otherwise
  */
-export function isDirectoryEmpty(dirPath) {
+function isDirectoryEmpty(dirPath) {
   try {
     const files = readdirSync(dirPath);
     return files.length === 0;
@@ -24,7 +24,7 @@ export function isDirectoryEmpty(dirPath) {
  * Create a directory if it doesn't exist
  * @param {string} dirPath - Directory path to create
  */
-export function ensureDirectoryExists(dirPath) {
+function ensureDirectoryExists(dirPath) {
   if (!existsSync(dirPath)) {
     mkdirSync(dirPath, { recursive: true });
   }
@@ -35,7 +35,7 @@ export function ensureDirectoryExists(dirPath) {
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
  */
-export function copyFile(src, dest) {
+function copyFile(src, dest) {
   ensureDirectoryExists(dirname(dest));
   copyFileSync(src, dest);
 }
@@ -46,7 +46,7 @@ export function copyFile(src, dest) {
  * @param {string} destDir - Destination directory path
  * @param {boolean} overwrite - Whether to overwrite existing files
  */
-export function copyDirectory(srcDir, destDir, overwrite = true) {
+function copyDirectory(srcDir, destDir, overwrite = true) {
   ensureDirectoryExists(destDir);
   
   const files = readdirSync(srcDir);
@@ -69,7 +69,7 @@ export function copyDirectory(srcDir, destDir, overwrite = true) {
  * Delete a directory recursively
  * @param {string} dirPath - Directory path to delete
  */
-export function deleteDirectory(dirPath) {
+function deleteDirectory(dirPath) {
   if (existsSync(dirPath)) {
     rmSync(dirPath, { recursive: true, force: true });
   }
@@ -79,7 +79,7 @@ export function deleteDirectory(dirPath) {
  * Get current timestamp as a string
  * @returns {string} Current timestamp in YYYY-MM-DD_HH-mm-ss format
  */
-export function getTimestamp() {
+function getTimestamp() {
   const now = new Date();
   return now.toISOString().replace(/[:.]/g, '-').slice(0, -5).replace('T', '_');
 }
@@ -88,7 +88,7 @@ export function getTimestamp() {
  * Log a message if debug mode is enabled
  * @param {string} message - Message to log
  */
-export function debugLog(message) {
+function debugLog(message) {
   if (process.env.DEBUG) {
     console.debug(message);
   }
@@ -97,7 +97,7 @@ export function debugLog(message) {
 /**
  * Calculate SHA-256 hash of a file
  */
-export async function hashFile(filePath) {
+async function hashFile(filePath) {
   const hash = createHash('sha256');
   const fileBuffer = await fs.readFile(filePath);
   hash.update(fileBuffer);
@@ -107,7 +107,7 @@ export async function hashFile(filePath) {
 /**
  * Create a snapshot of directory with file hashes
  */
-export async function snapshotDirectory(dirPath) {
+async function snapshotDirectory(dirPath) {
   try {
     const stat = await fs.stat(dirPath);
     if (!stat.isDirectory()) {
@@ -132,7 +132,7 @@ export async function snapshotDirectory(dirPath) {
 /**
  * Get list of all files in directory recursively
  */
-export async function getAllFiles(dirPath) {
+async function getAllFiles(dirPath) {
   const files = [];
 
   async function traverse(currentPath) {
@@ -156,7 +156,7 @@ export async function getAllFiles(dirPath) {
 /**
  * Get relative paths of all files in directory
  */
-export async function snapshotPathsOnly(dirPath) {
+async function snapshotPathsOnly(dirPath) {
   const files = await getAllFiles(dirPath);
   return files
     .map(file => relative(dirPath, file))
@@ -166,6 +166,19 @@ export async function snapshotPathsOnly(dirPath) {
 /**
  * Normalize remote directory path
  */
-export function normalizeRemoteDir(remoteDir) {
+function normalizeRemoteDir(remoteDir) {
   return remoteDir.replace(/\\/g, '/').replace(/\/$/, '');
 }
+
+module.exports.isDirectoryEmpty = isDirectoryEmpty;
+module.exports.ensureDirectoryExists = ensureDirectoryExists;
+module.exports.copyFile = copyFile;
+module.exports.copyDirectory = copyDirectory;
+module.exports.deleteDirectory = deleteDirectory;
+module.exports.getTimestamp = getTimestamp;
+module.exports.debugLog = debugLog;
+module.exports.hashFile = hashFile;
+module.exports.snapshotDirectory = snapshotDirectory;
+module.exports.getAllFiles = getAllFiles;
+module.exports.snapshotPathsOnly = snapshotPathsOnly;
+module.exports.normalizeRemoteDir = normalizeRemoteDir;

@@ -3,16 +3,16 @@
  */
 
 // Supported IDE directories
-export const SUPPORTED_DIRECTORIES = new Set(['.claude', '.cursor']);
+module.exports.SUPPORTED_DIRECTORIES = new Set(['.claude', '.cursor']);
 
 // Default git branch
-export const DEFAULT_BRANCH = 'main';
+module.exports.DEFAULT_BRANCH = 'main';
 
 // Default remote directory for configs
-export const DEFAULT_REMOTE_DIR = 'remote-config/ai';
+module.exports.DEFAULT_REMOTE_DIR = 'remote-config/ai';
 
 // Default repository URL (replace with your actual repo URL)
-export const DEFAULT_REPO_URL = 'https://github.com/xkcyy/ai-config.git';
+module.exports.DEFAULT_REPO_URL = 'https://github.com/xkcyy/ai-config.git';
 
 // Backup directory name
-export const BACKUP_DIR = '.ai-config-backup';
+module.exports.BACKUP_DIR = '.ai-config-backup';
