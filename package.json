@@ -2,9 +2,9 @@
   "name": "ai-config",
   "version": "1.0.0",
   "description": "Sync and push AI IDE configs for Claude / Code Cursor",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "bin": {
-    "ai-config": "./src/cli.ts"
+    "ai-config": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
