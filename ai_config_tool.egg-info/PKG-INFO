@@ -1,3 +1,15 @@
+Metadata-Version: 2.4
+Name: ai-config-tool
+Version: 0.1.0
+Summary: Sync and push AI IDE configs for Claude / Code Cursor
+Author: ai-coder-extends maintainers
+Keywords: ai,ide,config,claude,code-cursor
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+
 # ai-coder-extends
 
 ## AI 配置同步 & 推送工具
@@ -129,7 +141,7 @@ ai-config rollback 20251127-103000
 - `--dry-run` / `--force` / `--verbose`：控制同步行为、输出和安全策略。
 
 ### 认证与故障排查
-- 确保本机 Git 可以直接 `git clone`、`git push` 目标仓库；若使用 HTTPS 可配合凭据管理器。
-- `sync` 若提示 "Remote directory not found"，说明远程尚未初始化配置，需先执行 `ai-config push`。
+- 确保本机 Git 凭据可以直接 `git clone`、`git push` 目标仓库；若使用 HTTPS 可配合凭据管理器。
+- `sync` 若提示 “Remote directory not found”，说明远程尚未初始化配置，需先执行 `ai-config push`。
 - `push` 若显示 `non-fast-forward`，请先执行 `ai-config sync` 获取最新配置，再次推送。
 - 每次同步或推送都会输出日志，可搭配 `--verbose` 查看完整 Git 命令执行情况。
