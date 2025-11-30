@@ -44,15 +44,15 @@ ai-config push --message "chore: sync configurations"
 # 从 npm 安装
 npm install -g ai-config
 
-# 或从 GitHub 直接安装
-npm install -g https://github.com/xkcyy/ai-coder-extends.git
+# 或从 Gitee 直接安装
+npm install -g https://gitee.com/xkcyy/ai-config.git
 ```
 
 #### 开发方式：本地安装
 ```bash
 # 克隆仓库
-git clone https://github.com/xkcyy/ai-coder-extends.git
-cd ai-coder-extends
+git clone https://gitee.com/xkcyy/ai-config.git
+cd ai-config
 
 # 安装依赖
 npm install
@@ -71,15 +71,15 @@ npm install -g .
 ai-config sync --dry-run --verbose
 
 # 指定远程仓库、分支和目录
-ai-config sync --repo https://github.com/xkcyy/ai-coder-extends.git \
-                --branch main \
+ai-config sync --repo https://gitee.com/xkcyy/ai-config.git \
+                --branch master \
                 --remote-dir remote-config/ai
 
 # 强制同步（忽略本地未提交的更改）
 ai-config sync --force
 
 # 推送到指定分支和目录
-ai-config push --remote-dir remote-config/ai --branch main
+ai-config push --remote-dir remote-config/ai --branch master
 
 # 自定义提交信息
 ai-config push --message "feat: update claude settings"
@@ -90,7 +90,7 @@ ai-config rollback 20251130-103000
 
 ### 工作流程说明
 
-- **默认远程仓库**：指向 GitHub 仓库 `https://github.com/xkcyy/ai-coder-extends.git` 的 `remote-config/ai/` 目录
+- **默认远程仓库**：指向 Gitee 仓库 `https://gitee.com/xkcyy/ai-config.git` 的 `remote-config/ai/` 目录
 - **同步流程**：
   1. 克隆远程仓库的指定分支
   2. 读取远程 `remote-config/ai/.cursor/.claude` 配置
@@ -107,7 +107,7 @@ ai-config rollback 20251130-103000
 
 ### 参数说明
 
-- `--repo`：远程仓库地址（默认指向 GitHub 主仓库）
+- `--repo`：远程仓库地址（默认指向 Gitee 主仓库）
 - `--branch`：同步或推送的远程分支，默认 `master`
 - `--remote-dir`：远程仓库中存放配置的目录，默认 `remote-config/ai`
 - `--target`：本地项目根目录，默认为当前目录
