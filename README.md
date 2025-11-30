@@ -44,14 +44,14 @@ ai-config push --message "chore: sync configurations"
 # Install from npm
 npm install -g ai-config
 
-# Or install directly from Gitee
-npm install -g https://gitee.com/xkcyy/ai-config.git
+# Or install directly from GitHub
+npm install -g https://github.com/xkcyy/ai-config.git
 ```
 
 #### Development: Local Install
 ```bash
 # Clone repository
-git clone https://gitee.com/xkcyy/ai-config.git
+git clone https://github.com/xkcyy/ai-config.git
 cd ai-config
 
 # Install dependencies
@@ -71,15 +71,15 @@ npm install -g .
 ai-config sync --dry-run --verbose
 
 # Specify remote repository, branch, and directory
-ai-config sync --repo https://gitee.com/xkcyy/ai-config.git \
-                --branch master \
+ai-config sync --repo https://github.com/xkcyy/ai-config.git \
+                --branch main \
                 --remote-dir remote-config/ai
 
 # Force sync (ignore local uncommitted changes)
 ai-config sync --force
 
 # Push to specific branch and directory
-ai-config push --remote-dir remote-config/ai --branch master
+ai-config push --remote-dir remote-config/ai --branch main
 
 # Custom commit message
 ai-config push --message "feat: update claude settings"
@@ -90,7 +90,7 @@ ai-config rollback 20251130-103000
 
 ### Workflow
 
-- **Default Remote**: Gitee repository `https://gitee.com/xkcyy/ai-config.git` `remote-config/ai/` directory
+- **Default Remote**: GitHub repository `https://github.com/xkcyy/ai-config.git` `remote-config/ai/` directory
 - **Sync Process**:
   1. Clone remote repository specified branch
   2. Read remote `remote-config/ai/.cursor/.claude` configurations
@@ -107,8 +107,8 @@ ai-config rollback 20251130-103000
 
 ### Parameters
 
-- `--repo`: Remote repository URL (default points to Gitee main repository)
-- `--branch`: Remote branch for sync/push, default `master`
+- `--repo`: Remote repository URL (default points to GitHub main repository)
+- `--branch`: Remote branch for sync/push, default `main`
 - `--remote-dir`: Configuration directory in remote repository, default `remote-config/ai`
 - `--target`: Local project root directory, default current directory
 - `--message`: Commit message when pushing

@@ -30,11 +30,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/xkcyy/ai-config.git"
+    "url": "https://github.com/xkcyy/ai-config.git"
   },
-  "homepage": "https://gitee.com/xkcyy/ai-config#readme",
+  "homepage": "https://github.com/xkcyy/ai-config#readme",
   "bugs": {
-    "url": "https://gitee.com/xkcyy/ai-config/issues"
+    "url": "https://github.com/xkcyy/ai-config/issues"
   },
   "files": [
     "dist/",
