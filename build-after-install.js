@@ -16,7 +16,7 @@ if (!existsSync(distDir)) {
 // Run the build command
 try {
   console.log('Building project...');
-  execSync('npx tsc', { stdio: 'inherit', cwd: currentDir });
+  execSync('node node_modules/.bin/tsc', { stdio: 'inherit', cwd: currentDir });
   console.log('Build completed successfully!');
 } catch (error) {
   console.error('Build failed:', error.message);
