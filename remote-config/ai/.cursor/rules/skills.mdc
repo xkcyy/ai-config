@@ -18,6 +18,7 @@ alwaysApply: true
   { "name": "xlsx", "description": "Comprehensive spreadsheet creation, editing, and analysis with support for formulas, formatting, data analysis, and visualization. When Claude needs to work with spreadsheets (.xlsx, .xlsm, .csv, .tsv, etc) for: (1) Creating new spreadsheets with formulas and formatting, (2) Reading or analyzing data, (3) Modify existing spreadsheets while preserving formulas, (4) Data analysis and visualization in spreadsheets, or (5) Recalculating formulas", "path": ".claude/skills/document-skills/xlsx/SKILL.md" },
   { "name": "mcp-builder", "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).", "path": ".claude/skills/mcp-builder/SKILL.md" },
   { "name": "skill-creator", "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.", "path": ".claude/skills/skill-creator/SKILL.md" }
+
 ]```
 
 ## 2. 执行协议 (Execution Protocol)
