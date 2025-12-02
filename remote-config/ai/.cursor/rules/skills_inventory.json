@@ -1,0 +1,32 @@
+[
+  {
+    "name": "skill-creator",
+    "description": "创建有效技能/工具的指南。当用户想要创建/更新技能时使用。",
+    "path": ".claude/skills/skill-creator/SKILL.md"
+  },
+  {
+    "name": "mcp-builder",
+    "description": "创建高质量 MCP 服务器（Python/Node）的指南。",
+    "path": ".claude/skills/mcp-builder/SKILL.md"
+  },
+  {
+    "name": "pdf",
+    "description": "读取、提取文本和分析 PDF 文档的专用能力。",
+    "path": ".claude/skills/document-skills/pdf/SKILL.md"
+  },
+  {
+    "name": "docx",
+    "description": "处理 Word (docx) 文档的专用能力。",
+    "path": ".claude/skills/document-skills/docx/SKILL.md"
+  },
+  {
+    "name": "xlsx",
+    "description": "处理 Excel (xlsx) 电子表格的专用能力。",
+    "path": ".claude/skills/document-skills/xlsx/SKILL.md"
+  },
+  {
+    "name": "pptx",
+    "description": "处理 PowerPoint (pptx) 演示文稿的专用能力。",
+    "path": ".claude/skills/document-skills/pptx/SKILL.md"
+  }
+]
