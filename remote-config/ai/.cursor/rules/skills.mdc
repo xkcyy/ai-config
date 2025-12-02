@@ -1,6 +1,5 @@
 ---
-description: 技能管理器 - 加载 .claude/skills 中的专业能力 (PDF, MCP, etc.)
-globs: **/*.md, **/*.ts, **/*.py, **/*.txt
+alwaysApply: true
 ---
 
 # Skill Manager
