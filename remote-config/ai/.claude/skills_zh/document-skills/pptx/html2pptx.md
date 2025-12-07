@@ -1,127 +1,122 @@
-# HTML 转 PowerPoint 指南
+# HTML to PowerPoint Guide
 
-使用 `html2pptx.js` 库将 HTML 幻灯片转换为 PowerPoint 演示文稿，实现精确的定位。
+Convert HTML slides to PowerPoint presentations with accurate positioning using the `html2pptx.js` library.
 
-## 目录
+## Table of Contents
 
-1. [创建 HTML 幻灯片](#创建-html-幻灯片)
-2. [使用 html2pptx 库](#使用-html2pptx-库)
-3. [使用 PptxGenJS](#使用-pptxgenjs)
+1. [Creating HTML Slides](#creating-html-slides)
+2. [Using the html2pptx Library](#using-the-html2pptx-library)
+3. [Using PptxGenJS](#using-pptxgenjs)
 
 ---
 
-## 创建 HTML 幻灯片
+## Creating HTML Slides
 
-每个 HTML 幻灯片必须包含正确的 body 尺寸：
+Every HTML slide must include proper body dimensions:
 
-### 布局尺寸
+### Layout Dimensions
 
-- **16:9**（默认）：`width: 720pt; height: 405pt`
-- **4:3**：`width: 720pt; height: 540pt`
-- **16:10**：`width: 720pt; height: 450pt`
+- **16:9** (default): `width: 720pt; height: 405pt`
+- **4:3**: `width: 720pt; height: 540pt`
+- **16:10**: `width: 720pt; height: 450pt`
 
-### 支持的元素
+### Supported Elements
 
-- `<p>, <h1>`-`<h6>` - 带样式的文本
-- `<ul>, <ol>` - 列表（绝不要使用手动项目符号 •, -, \*）
-- `<b>, <strong>` - 粗体文本（内联格式）
-- `<i>, <em>` - 斜体文本（内联格式）
-- `<u>` - 下划线文本（内联格式）
-- `<span>` - 带 CSS 样式的内联格式（粗体、斜体、下划线、颜色）
-- `<br>` - 换行符
-- 带背景/边框的 `<div>` - 变为形状
-- `<img>` - 图像
-- `class="placeholder"` - 为图表保留空间（返回 `{ id, x, y, w, h }`）
+- `<p>`, `<h1>`-`<h6>` - Text with styling
+- `<ul>`, `<ol>` - Lists (never use manual bullets •, -, *)
+- `<b>`, `<strong>` - Bold text (inline formatting)
+- `<i>`, `<em>` - Italic text (inline formatting)
+- `<u>` - Underlined text (inline formatting)
+- `<span>` - Inline formatting with CSS styles (bold, italic, underline, color)
+- `<br>` - Line breaks
+- `<div>` with bg/border - Becomes shape
+- `<img>` - Images
+- `class="placeholder"` - Reserved space for charts (returns `{ id, x, y, w, h }`)
 
-### 重要文本规则
+### Critical Text Rules
 
-**所有文本必须在 `<p>、<h1>`-`<h6>、<ul> 或 <ol> 标签内**：
+**ALL text MUST be inside `<p>`, `<h1>`-`<h6>`, `<ul>`, or `<ol>` tags:**
+- ✅ Correct: `<div><p>Text here</p></div>`
+- ❌ Wrong: `<div>Text here</div>` - **Text will NOT appear in PowerPoint**
+- ❌ Wrong: `<span>Text</span>` - **Text will NOT appear in PowerPoint**
+- Text in `<div>` or `<span>` without a text tag will be silently ignored
 
-- ✅ 正确：`<div><p>Text here</p></div>`
-- ❌ 错误：`<div>Text here</div>` - **文本不会在 PowerPoint 中显示**
-- ❌ 错误：`<span>Text</span>` - **文本不会在 PowerPoint 中显示**
-- 不在文本标签内的 `<div>` 或 `<span>` 中的文本将被静默忽略
+**NEVER use manual bullet symbols (•, -, *, etc.)** - Use `<ul>` or `<ol>` lists instead
 
-**绝不要使用手动项目符号（•, -, \*, 等）** - 请改用 `<ul>` 或 `<ol>` 列表
+**ONLY use web-safe fonts that are universally available:**
+- ✅ Web-safe fonts: `Arial`, `Helvetica`, `Times New Roman`, `Georgia`, `Courier New`, `Verdana`, `Tahoma`, `Trebuchet MS`, `Impact`, `Comic Sans MS`
+- ❌ Wrong: `'Segoe UI'`, `'SF Pro'`, `'Roboto'`, custom fonts - **Might cause rendering issues**
 
-**仅使用普遍可用的网页安全字体**：
+### Styling
 
-- ✅ 网页安全字体：`Arial`, `Helvetica`, `Times New Roman`, `Georgia`, `Courier New`, `Verdana`, `Tahoma`, `Trebuchet MS`, `Impact`, `Comic Sans MS`
-- ❌ 错误：`'Segoe UI'`, `'SF Pro'`, `'Roboto'`, 自定义字体 - **可能导致渲染问题**
+- Use `display: flex` on body to prevent margin collapse from breaking overflow validation
+- Use `margin` for spacing (padding included in size)
+- Inline formatting: Use `<b>`, `<i>`, `<u>` tags OR `<span>` with CSS styles
+  - `<span>` supports: `font-weight: bold`, `font-style: italic`, `text-decoration: underline`, `color: #rrggbb`
+  - `<span>` does NOT support: `margin`, `padding` (not supported in PowerPoint text runs)
+  - Example: `<span style="font-weight: bold; color: #667eea;">Bold blue text</span>`
+- Flexbox works - positions calculated from rendered layout
+- Use hex colors with `#` prefix in CSS
+- **Text alignment**: Use CSS `text-align` (`center`, `right`, etc.) when needed as a hint to PptxGenJS for text formatting if text lengths are slightly off
 
-### 样式
+### Shape Styling (DIV elements only)
 
-- 在 body 上使用 `display: flex` 以防止外边距折叠破坏溢出验证
-- 使用 `margin` 进行间距（大小包含 padding）
-- 内联格式：使用 `<b>`、`<i>`、`<u>` 标签或带 CSS 样式的 `<span>`
-  - `<span>` 支持：`font-weight: bold`、`font-style: italic`、`text-decoration: underline`、`color: #rrggbb`
-  - `<span>` 不支持：`margin`、`padding`（PowerPoint 文本运行不支持）
-  - 示例：`<span style="font-weight: bold; color: #667eea;">Bold blue text</span>`
-- Flexbox 可用 - 位置从渲染布局计算
-- 在 CSS 中使用带 `#` 前缀的十六进制颜色
-- **文本对齐**：如果文本长度略有不同，使用 CSS `text-align`（`center`、`right` 等）作为 PptxGenJS 文本格式的提示
+**IMPORTANT: Backgrounds, borders, and shadows only work on `<div>` elements, NOT on text elements (`<p>`, `<h1>`-`<h6>`, `<ul>`, `<ol>`)**
 
-### 形状样式（仅 DIV 元素）
+- **Backgrounds**: CSS `background` or `background-color` on `<div>` elements only
+  - Example: `<div style="background: #f0f0f0;">` - Creates a shape with background
+- **Borders**: CSS `border` on `<div>` elements converts to PowerPoint shape borders
+  - Supports uniform borders: `border: 2px solid #333333`
+  - Supports partial borders: `border-left`, `border-right`, `border-top`, `border-bottom` (rendered as line shapes)
+  - Example: `<div style="border-left: 8pt solid #E76F51;">`
+- **Border radius**: CSS `border-radius` on `<div>` elements for rounded corners
+  - `border-radius: 50%` or higher creates circular shape
+  - Percentages <50% calculated relative to shape's smaller dimension
+  - Supports px and pt units (e.g., `border-radius: 8pt;`, `border-radius: 12px;`)
+  - Example: `<div style="border-radius: 25%;">` on 100x200px box = 25% of 100px = 25px radius
+- **Box shadows**: CSS `box-shadow` on `<div>` elements converts to PowerPoint shadows
+  - Supports outer shadows only (inset shadows are ignored to prevent corruption)
+  - Example: `<div style="box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">`
+  - Note: Inset/inner shadows are not supported by PowerPoint and will be skipped
 
-**重要提示：背景、边框和阴影仅适用于 `<div>` 元素，不适用于文本元素（`<p>、<h1>`-`<h6>、<ul>、<ol>`）**
+### Icons & Gradients
 
-- **背景**：仅在 `<div>` 元素上使用 CSS `background` 或 `background-color`
-  - 示例：`<div style="background: #f0f0f0;">` - 创建带背景的形状
-- **边框**：`<div>` 元素上的 CSS `border` 转换为 PowerPoint 形状边框
-  - 支持统一边框：`border: 2px solid #333333`
-  - 支持部分边框：`border-left`、`border-right`、`border-top`、`border-bottom`（渲染为线条形状）
-  - 示例：`<div style="border-left: 8pt solid #E76F51;">`
-- **边框半径**：`<div>` 元素上的 CSS `border-radius` 用于圆角
-  - `border-radius: 50%` 或更高创建圆形
-  - 小于 50% 的百分比相对于形状的较小维度计算
-  - 支持 px 和 pt 单位（例如 `border-radius: 8pt;`、`border-radius: 12px;`）
-  - 示例：在 100x200px 盒子上使用 `<div style="border-radius: 25%;">` = 100px 的 25% = 25px 半径
-- **盒子阴影**：`<div>` 元素上的 CSS `box-shadow` 转换为 PowerPoint 阴影
-  - 仅支持外阴影（内阴影被忽略以防止损坏）
-  - 示例：`<div style="box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);">`
-  - 注意：PowerPoint 不支持内阴影，将被跳过
+- **CRITICAL: Never use CSS gradients (`linear-gradient`, `radial-gradient`)** - They don't convert to PowerPoint
+- **ALWAYS create gradient/icon PNGs FIRST using Sharp, then reference in HTML**
+- For gradients: Rasterize SVG to PNG background images
+- For icons: Rasterize react-icons SVG to PNG images
+- All visual effects must be pre-rendered as raster images before HTML rendering
 
-### 图标和渐变
-
-- **重要提示：绝不要使用 CSS 渐变（`linear-gradient`、`radial-gradient`）** - 它们无法转换为 PowerPoint
-- **始终先使用 Sharp 创建渐变/图标 PNG，然后在 HTML 中引用**
-- 对于渐变：将 SVG 光栅化为 PNG 背景图像
-- 对于图标：将 react-icons SVG 光栅化为 PNG 图像
-- 所有视觉效果必须在 HTML 渲染之前预渲染为光栅图像
-
-**使用 Sharp 光栅化图标**：
+**Rasterizing Icons with Sharp:**
 
 ```javascript
-const React = require("react");
-const ReactDOMServer = require("react-dom/server");
-const sharp = require("sharp");
-const { FaHome } = require("react-icons/fa");
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+const sharp = require('sharp');
+const { FaHome } = require('react-icons/fa');
 
 async function rasterizeIconPng(IconComponent, color, size = "256", filename) {
   const svgString = ReactDOMServer.renderToStaticMarkup(
     React.createElement(IconComponent, { color: `#${color}`, size: size })
   );
 
-  // 使用 Sharp 将 SVG 转换为 PNG
-  await sharp(Buffer.from(svgString)).png().toFile(filename);
+  // Convert SVG to PNG using Sharp
+  await sharp(Buffer.from(svgString))
+    .png()
+    .toFile(filename);
 
   return filename;
 }
 
-// 使用方法：在 HTML 中使用之前光栅化图标
-const iconPath = await rasterizeIconPng(
-  FaHome,
-  "4472c4",
-  "256",
-  "home-icon.png"
-);
-// 然后在 HTML 中引用：<img src="home-icon.png" style="width: 40pt; height: 40pt;">
+// Usage: Rasterize icon before using in HTML
+const iconPath = await rasterizeIconPng(FaHome, "4472c4", "256", "home-icon.png");
+// Then reference in HTML: <img src="home-icon.png" style="width: 40pt; height: 40pt;">
 ```
 
-**使用 Sharp 光栅化渐变**：
+**Rasterizing Gradients with Sharp:**
 
 ```javascript
-const sharp = require("sharp");
+const sharp = require('sharp');
 
 async function createGradientBackground(filename) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="562.5">
@@ -134,621 +129,497 @@ async function createGradientBackground(filename) {
     <rect width="100%" height="100%" fill="url(#g)"/>
   </svg>`;
 
-  await sharp(Buffer.from(svg)).png().toFile(filename);
+  await sharp(Buffer.from(svg))
+    .png()
+    .toFile(filename);
 
   return filename;
 }
 
-// 使用方法：在 HTML 之前创建渐变背景
+// Usage: Create gradient background before HTML
 const bgPath = await createGradientBackground("gradient-bg.png");
-// 然后在 HTML 中：<body style="background-image: url('gradient-bg.png');">
+// Then in HTML: <body style="background-image: url('gradient-bg.png');">
 ```
 
-### 示例
+### Example
 
 ```html
 <!DOCTYPE html>
 <html>
-  <head>
-    <style>
-      html {
-        background: #ffffff;
-      }
-      body {
-        width: 720pt;
-        height: 405pt;
-        margin: 0;
-        padding: 0;
-        background: #f5f5f5;
-        font-family: Arial, sans-serif;
-        display: flex;
-      }
-      .content {
-        margin: 30pt;
-        padding: 40pt;
-        background: #ffffff;
-        border-radius: 8pt;
-      }
-      h1 {
-        color: #2d3748;
-        font-size: 32pt;
-      }
-      .box {
-        background: #70ad47;
-        padding: 20pt;
-        border: 3px solid #5a8f37;
-        border-radius: 12pt;
-        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.25);
-      }
-    </style>
-  </head>
-  <body>
-    <div class="content">
-      <h1>Recipe Title</h1>
-      <ul>
-        <li><b>Item:</b> Description</li>
-      </ul>
-      <p>Text with <b>bold</b>, <i>italic</i>, <u>underline</u>.</p>
-      <div
-        id="chart"
-        class="placeholder"
-        style="width: 350pt; height: 200pt;"
-      ></div>
+<head>
+<style>
+html { background: #ffffff; }
+body {
+  width: 720pt; height: 405pt; margin: 0; padding: 0;
+  background: #f5f5f5; font-family: Arial, sans-serif;
+  display: flex;
+}
+.content { margin: 30pt; padding: 40pt; background: #ffffff; border-radius: 8pt; }
+h1 { color: #2d3748; font-size: 32pt; }
+.box {
+  background: #70ad47; padding: 20pt; border: 3px solid #5a8f37;
+  border-radius: 12pt; box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.25);
+}
+</style>
+</head>
+<body>
+<div class="content">
+  <h1>Recipe Title</h1>
+  <ul>
+    <li><b>Item:</b> Description</li>
+  </ul>
+  <p>Text with <b>bold</b>, <i>italic</i>, <u>underline</u>.</p>
+  <div id="chart" class="placeholder" style="width: 350pt; height: 200pt;"></div>
 
-      <!-- 文本必须在 <p> 标签内 -->
-      <div class="box">
-        <p>5</p>
-      </div>
-    </div>
-  </body>
+  <!-- Text MUST be in <p> tags -->
+  <div class="box">
+    <p>5</p>
+  </div>
+</div>
+</body>
 </html>
 ```
 
-## 使用 html2pptx 库
+## Using the html2pptx Library
 
-### 依赖
+### Dependencies
 
-这些库已全局安装并可使用：
-
+These libraries have been globally installed and are available to use:
 - `pptxgenjs`
 - `playwright`
 - `sharp`
 
-### 基本用法
+### Basic Usage
 
 ```javascript
-const pptxgen = require("pptxgenjs");
-const html2pptx = require("./html2pptx");
+const pptxgen = require('pptxgenjs');
+const html2pptx = require('./html2pptx');
 
 const pptx = new pptxgen();
-pptx.layout = "LAYOUT_16x9"; // 必须与 HTML body 尺寸匹配
+pptx.layout = 'LAYOUT_16x9';  // Must match HTML body dimensions
 
-const { slide, placeholders } = await html2pptx("slide1.html", pptx);
+const { slide, placeholders } = await html2pptx('slide1.html', pptx);
 
-// 向占位符区域添加图表
+// Add chart to placeholder area
 if (placeholders.length > 0) {
-  slide.addChart(pptx.charts.LINE, chartData, placeholders[0]);
+    slide.addChart(pptx.charts.LINE, chartData, placeholders[0]);
 }
 
-await pptx.writeFile("output.pptx");
+await pptx.writeFile('output.pptx');
 ```
 
 ### API 参考
 
-#### 函数签名
-
+#### Function Signature
 ```javascript
-await html2pptx(htmlFile, pres, options);
+await html2pptx(htmlFile, pres, options)
 ```
 
 #### 参数
+- `htmlFile` (string): Path to HTML file (absolute or relative)
+- `pres` (pptxgen): PptxGenJS presentation instance with layout already set
+- `options` (object, optional):
+  - `tmpDir` (string): Temporary directory for generated files (default: `process.env.TMPDIR || '/tmp'`)
+  - `slide` (object): Existing slide to reuse (default: creates new slide)
 
-- `htmlFile` (string)：HTML 文件路径（绝对或相对）
-- `pres` (pptxgen)：已设置布局的 PptxGenJS 演示文稿实例
-- `options` (object, 可选)：
-  - `tmpDir` (string)：生成文件的临时目录（默认：`process.env.TMPDIR || '/tmp'`）
-  - `slide` (object)：要重用的现有幻灯片（默认：创建新幻灯片）
-
-#### 返回值
-
+#### Returns
 ```javascript
 {
-    slide: pptxgenSlide,           // 创建/更新的幻灯片
-    placeholders: [                 // 占位符位置数组
+    slide: pptxgenSlide,           // The created/updated slide
+    placeholders: [                 // Array of placeholder positions
         { id: string, x: number, y: number, w: number, h: number },
         ...
     ]
 }
 ```
 
-### 验证
+### Validation
 
-该库会自动验证并在抛出错误前收集所有错误：
+The library automatically validates and collects all errors before throwing:
 
-1. **HTML 尺寸必须与演示文稿布局匹配** - 报告尺寸不匹配
-2. **内容不得溢出 body** - 报告溢出并显示准确测量值
-3. **CSS 渐变** - 报告不支持的渐变用法
-4. **文本元素样式** - 报告文本元素上的背景/边框/阴影（仅允许在 div 上）
+1. **HTML dimensions must match presentation layout** - Reports dimension mismatches
+2. **Content must not overflow body** - Reports overflow with exact measurements
+3. **CSS gradients** - Reports unsupported gradient usage
+4. **Text element styling** - Reports backgrounds/borders/shadows on text elements (only allowed on divs)
 
-**所有验证错误都将一起收集并报告**，允许您一次修复所有问题，而不是一次一个。
+**All validation errors are collected and reported together** in a single error message, allowing you to fix all issues at once instead of one at a time.
 
-### 使用占位符
+### Working with Placeholders
 
 ```javascript
-const { slide, placeholders } = await html2pptx("slide.html", pptx);
+const { slide, placeholders } = await html2pptx('slide.html', pptx);
 
-// 使用第一个占位符
+// Use first placeholder
 slide.addChart(pptx.charts.BAR, data, placeholders[0]);
 
-// 按 ID 查找
-const chartArea = placeholders.find((p) => p.id === "chart-area");
+// Find by ID
+const chartArea = placeholders.find(p => p.id === 'chart-area');
 slide.addChart(pptx.charts.LINE, data, chartArea);
 ```
 
-### 完整示例
+### Complete Example
 
 ```javascript
-const pptxgen = require("pptxgenjs");
-const html2pptx = require("./html2pptx");
+const pptxgen = require('pptxgenjs');
+const html2pptx = require('./html2pptx');
 
 async function createPresentation() {
-  const pptx = new pptxgen();
-  pptx.layout = "LAYOUT_16x9";
-  pptx.author = "Your Name";
-  pptx.title = "My Presentation";
+    const pptx = new pptxgen();
+    pptx.layout = 'LAYOUT_16x9';
+    pptx.author = 'Your Name';
+    pptx.title = 'My Presentation';
 
-  // 幻灯片 1：标题
-  const { slide: slide1 } = await html2pptx("slides/title.html", pptx);
+    // Slide 1: Title
+    const { slide: slide1 } = await html2pptx('slides/title.html', pptx);
 
-  // 幻灯片 2：带图表的内容
-  const { slide: slide2, placeholders } = await html2pptx(
-    "slides/data.html",
-    pptx
-  );
+    // Slide 2: Content with chart
+    const { slide: slide2, placeholders } = await html2pptx('slides/data.html', pptx);
 
-  const chartData = [
-    {
-      name: "Sales",
-      labels: ["Q1", "Q2", "Q3", "Q4"],
-      values: [4500, 5500, 6200, 7100],
-    },
-  ];
+    const chartData = [{
+        name: 'Sales',
+        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+        values: [4500, 5500, 6200, 7100]
+    }];
 
-  slide2.addChart(pptx.charts.BAR, chartData, {
-    ...placeholders[0],
-    showTitle: true,
-    title: "Quarterly Sales",
-    showCatAxisTitle: true,
-    catAxisTitle: "Quarter",
-    showValAxisTitle: true,
-    valAxisTitle: "Sales ($000s)",
-  });
+    slide2.addChart(pptx.charts.BAR, chartData, {
+        ...placeholders[0],
+        showTitle: true,
+        title: 'Quarterly Sales',
+        showCatAxisTitle: true,
+        catAxisTitle: 'Quarter',
+        showValAxisTitle: true,
+        valAxisTitle: 'Sales ($000s)'
+    });
 
-  // 保存
-  await pptx.writeFile({ fileName: "presentation.pptx" });
-  console.log("Presentation created successfully!");
+    // Save
+    await pptx.writeFile({ fileName: 'presentation.pptx' });
+    console.log('Presentation created successfully!');
 }
 
 createPresentation().catch(console.error);
 ```
 
-## 使用 PptxGenJS
+## Using PptxGenJS
 
-使用 `html2pptx` 将 HTML 转换为幻灯片后，您将使用 PptxGenJS 添加动态内容，如图表、图像和其他元素。
+After converting HTML to slides with `html2pptx`, you'll use PptxGenJS to add dynamic content like charts, images, and additional elements.
 
-### ⚠️ 重要规则
+### ⚠️ Critical Rules
 
-#### 颜色
+#### Colors
+- **NEVER use `#` prefix** with hex colors in PptxGenJS - causes file corruption
+- ✅ Correct: `color: "FF0000"`, `fill: { color: "0066CC" }`
+- ❌ Wrong: `color: "#FF0000"` (breaks document)
 
-- **绝不要在 PptxGenJS 中使用 `#` 前缀** - 会导致文件损坏
-- ✅ 正确：`color: "FF0000"`, `fill: { color: "0066CC" }`
-- ❌ 错误：`color: "#FF0000"`（破坏文档）
+### Adding Images
 
-### 添加图像
-
-始终从实际图像尺寸计算宽高比：
+Always calculate aspect ratios from actual image dimensions:
 
 ```javascript
-// 获取图像尺寸：identify image.png | grep -o '[0-9]* x [0-9]*'
-const imgWidth = 1860,
-  imgHeight = 1519; // 来自实际文件
+// Get image dimensions: identify image.png | grep -o '[0-9]* x [0-9]*'
+const imgWidth = 1860, imgHeight = 1519;  // From actual file
 const aspectRatio = imgWidth / imgHeight;
 
-const h = 3; // 最大高度
+const h = 3;  // Max height
 const w = h * aspectRatio;
-const x = (10 - w) / 2; // 在 16:9 幻灯片上居中
+const x = (10 - w) / 2;  // Center on 16:9 slide
 
 slide.addImage({ path: "chart.png", x, y: 1.5, w, h });
 ```
 
-### 添加文本
+### Adding Text
 
 ```javascript
-// 带格式的富文本
-slide.addText(
-  [
+// Rich text with formatting
+slide.addText([
     { text: "Bold ", options: { bold: true } },
     { text: "Italic ", options: { italic: true } },
-    { text: "Normal" },
-  ],
-  {
-    x: 1,
-    y: 2,
-    w: 8,
-    h: 1,
-  }
-);
+    { text: "Normal" }
+], {
+    x: 1, y: 2, w: 8, h: 1
+});
 ```
 
-### 添加形状
+### Adding Shapes
 
 ```javascript
-// 矩形
+// Rectangle
 slide.addShape(pptx.shapes.RECTANGLE, {
-  x: 1,
-  y: 1,
-  w: 3,
-  h: 2,
-  fill: { color: "4472C4" },
-  line: { color: "000000", width: 2 },
+    x: 1, y: 1, w: 3, h: 2,
+    fill: { color: "4472C4" },
+    line: { color: "000000", width: 2 }
 });
 
-// 圆形
+// Circle
 slide.addShape(pptx.shapes.OVAL, {
-  x: 5,
-  y: 1,
-  w: 2,
-  h: 2,
-  fill: { color: "ED7D31" },
+    x: 5, y: 1, w: 2, h: 2,
+    fill: { color: "ED7D31" }
 });
 
-// 圆角矩形
+// Rounded rectangle
 slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
-  x: 1,
-  y: 4,
-  w: 3,
-  h: 1.5,
-  fill: { color: "70AD47" },
-  rectRadius: 0.2,
+    x: 1, y: 4, w: 3, h: 1.5,
+    fill: { color: "70AD47" },
+    rectRadius: 0.2
 });
 ```
 
-### 添加图表
+### Adding Charts
 
-**大多数图表需要**：使用 `catAxisTitle`（类别）和 `valAxisTitle`（值）的轴标签。
+**Required for most charts:** Axis labels using `catAxisTitle` (category) and `valAxisTitle` (value).
 
-**图表数据格式**：
+**Chart Data Format:**
+- Use **single series with all labels** for simple bar/line charts
+- Each series creates a separate legend entry
+- Labels array defines X-axis values
 
-- 简单条形图/折线图使用**单个系列包含所有标签**
-- 每个系列创建一个单独的图例项
-- 标签数组定义 X 轴值
-
-**时间序列数据 - 选择正确的粒度**：
-
-- **< 30 天**：使用每日分组（例如 "10-01", "10-02"）- 避免月聚合创建单点图表
-- **30-365 天**：使用月分组（例如 "2024-01", "2024-02"）
-- **> 365 天**：使用年分组（例如 "2023", "2024"）
-- **验证**：只有 1 个数据点的图表可能表明时间周期的聚合不正确
+**Time Series Data - Choose Correct Granularity:**
+- **< 30 days**: Use daily grouping (e.g., "10-01", "10-02") - avoid monthly aggregation that creates single-point charts
+- **30-365 days**: Use monthly grouping (e.g., "2024-01", "2024-02")
+- **> 365 days**: Use yearly grouping (e.g., "2023", "2024")
+- **Validate**: Charts with only 1 data point likely indicate incorrect aggregation for the time period
 
 ```javascript
-const { slide, placeholders } = await html2pptx("slide.html", pptx);
+const { slide, placeholders } = await html2pptx('slide.html', pptx);
 
-// 正确：单个系列包含所有标签
-slide.addChart(
-  pptx.charts.BAR,
-  [
-    {
-      name: "Sales 2024",
-      labels: ["Q1", "Q2", "Q3", "Q4"],
-      values: [4500, 5500, 6200, 7100],
-    },
-  ],
-  {
-    ...placeholders[0], // 使用占位符位置
-    barDir: "col", // 'col' = 垂直条形图, 'bar' = 水平条形图
+// CORRECT: Single series with all labels
+slide.addChart(pptx.charts.BAR, [{
+    name: "Sales 2024",
+    labels: ["Q1", "Q2", "Q3", "Q4"],
+    values: [4500, 5500, 6200, 7100]
+}], {
+    ...placeholders[0],  // Use placeholder position
+    barDir: 'col',       // 'col' = vertical bars, 'bar' = horizontal
     showTitle: true,
-    title: "Quarterly Sales",
-    showLegend: false, // 单系列不需要图例
-    // 必需的轴标签
+    title: 'Quarterly Sales',
+    showLegend: false,   // No legend needed for single series
+    // Required axis labels
     showCatAxisTitle: true,
-    catAxisTitle: "Quarter",
+    catAxisTitle: 'Quarter',
     showValAxisTitle: true,
-    valAxisTitle: "Sales ($000s)",
-    // 可选：控制缩放（根据数据范围调整最小值以获得更好的可视化效果）
+    valAxisTitle: 'Sales ($000s)',
+    // Optional: Control scaling (adjust min based on data range for better visualization)
     valAxisMaxVal: 8000,
-    valAxisMinVal: 0, // 计数/金额使用 0；对于聚类数据（例如 4500-7100），考虑从更接近最小值的位置开始
-    valAxisMajorUnit: 2000, // 控制 y 轴标签间距以防止拥挤
-    catAxisLabelRotate: 45, // 如果拥挤，旋转标签
-    dataLabelPosition: "outEnd",
-    dataLabelColor: "000000",
-    // 单系列图表使用单一颜色
-    chartColors: ["4472C4"], // 所有条形图使用相同颜色
-  }
-);
+    valAxisMinVal: 0,  // Use 0 for counts/amounts; for clustered data (e.g., 4500-7100), consider starting closer to min value
+    valAxisMajorUnit: 2000,  // Control y-axis label spacing to prevent crowding
+    catAxisLabelRotate: 45,  // Rotate labels if crowded
+    dataLabelPosition: 'outEnd',
+    dataLabelColor: '000000',
+    // Use single color for single-series charts
+    chartColors: ["4472C4"]  // All bars same color
+});
 ```
 
-#### 散点图
+#### Scatter Chart
 
-**重要**：散点图数据格式不寻常 - 第一个系列包含 X 轴值，后续系列包含 Y 值：
+**IMPORTANT**: Scatter chart data format is unusual - first series contains X-axis values, subsequent series contain Y-values:
 
 ```javascript
-// 准备数据
-const data1 = [
-  { x: 10, y: 20 },
-  { x: 15, y: 25 },
-  { x: 20, y: 30 },
-];
-const data2 = [
-  { x: 12, y: 18 },
-  { x: 18, y: 22 },
-];
+// Prepare data
+const data1 = [{ x: 10, y: 20 }, { x: 15, y: 25 }, { x: 20, y: 30 }];
+const data2 = [{ x: 12, y: 18 }, { x: 18, y: 22 }];
 
-const allXValues = [...data1.map((d) => d.x), ...data2.map((d) => d.x)];
+const allXValues = [...data1.map(d => d.x), ...data2.map(d => d.x)];
 
-slide.addChart(
-  pptx.charts.SCATTER,
-  [
-    { name: "X-Axis", values: allXValues }, // 第一个系列 = X 值
-    { name: "Series 1", values: data1.map((d) => d.y) }, // 仅 Y 值
-    { name: "Series 2", values: data2.map((d) => d.y) }, // 仅 Y 值
-  ],
-  {
-    x: 1,
-    y: 1,
-    w: 8,
-    h: 4,
-    lineSize: 0, // 0 = 无连接线
-    lineDataSymbol: "circle",
+slide.addChart(pptx.charts.SCATTER, [
+    { name: 'X-Axis', values: allXValues },  // First series = X values
+    { name: 'Series 1', values: data1.map(d => d.y) },  // Y values only
+    { name: 'Series 2', values: data2.map(d => d.y) }   // Y values only
+], {
+    x: 1, y: 1, w: 8, h: 4,
+    lineSize: 0,  // 0 = no connecting lines
+    lineDataSymbol: 'circle',
     lineDataSymbolSize: 6,
     showCatAxisTitle: true,
-    catAxisTitle: "X Axis",
+    catAxisTitle: 'X Axis',
     showValAxisTitle: true,
-    valAxisTitle: "Y Axis",
-    chartColors: ["4472C4", "ED7D31"],
-  }
-);
+    valAxisTitle: 'Y Axis',
+    chartColors: ["4472C4", "ED7D31"]
+});
 ```
 
-#### 折线图
+#### Line Chart
 
 ```javascript
-slide.addChart(
-  pptx.charts.LINE,
-  [
-    {
-      name: "Temperature",
-      labels: ["Jan", "Feb", "Mar", "Apr"],
-      values: [32, 35, 42, 55],
-    },
-  ],
-  {
-    x: 1,
-    y: 1,
-    w: 8,
-    h: 4,
+slide.addChart(pptx.charts.LINE, [{
+    name: "Temperature",
+    labels: ["Jan", "Feb", "Mar", "Apr"],
+    values: [32, 35, 42, 55]
+}], {
+    x: 1, y: 1, w: 8, h: 4,
     lineSize: 4,
     lineSmooth: true,
-    // 必需的轴标签
+    // Required axis labels
     showCatAxisTitle: true,
-    catAxisTitle: "Month",
+    catAxisTitle: 'Month',
     showValAxisTitle: true,
-    valAxisTitle: "Temperature (°F)",
-    // 可选：Y 轴范围（对于数据范围集中的情况，从更接近最小值的位置开始以显示变化）
-    valAxisMinVal: 30, // 首选：对于聚类数据（例如 32-55 或评分 3-5），从更接近最小值的位置开始以显示变化
+    valAxisTitle: 'Temperature (°F)',
+    // Optional: Y-axis range (set min based on data range for better visualization)
+    valAxisMinVal: 0,     // For ranges starting at 0 (counts, percentages, etc.)
     valAxisMaxVal: 60,
-    valAxisMajorUnit: 10, // 控制 y 轴标签间距以防止拥挤（例如 10, 20, 25）
-    // valAxisMinVal: 0,  // 计数/百分比使用 0
-    // 可选：图表颜色
-    chartColors: ["4472C4", "ED7D31", "A5A5A5"],
-  }
-);
+    valAxisMajorUnit: 20,  // Control y-axis label spacing to prevent crowding (e.g., 10, 20, 25)
+    // valAxisMinVal: 30,  // PREFERRED: For data clustered in a range (e.g., 32-55 or ratings 3-5), start axis closer to min value to show variation
+    // Optional: Chart colors
+    chartColors: ["4472C4", "ED7D31", "A5A5A5"]
+});
 ```
 
-#### 饼图（不需要轴标签）
+#### Pie Chart (No Axis Labels Required)
 
-**重要**：饼图需要**单个数据系列**，所有类别在 `labels` 数组中，对应的值在 `values` 数组中。
+**CRITICAL**: Pie charts require a **single data series** with all categories in the `labels` array and corresponding values in the `values` array.
 
 ```javascript
-slide.addChart(
-  pptx.charts.PIE,
-  [
-    {
-      name: "Market Share",
-      labels: ["Product A", "Product B", "Other"], // 所有类别在一个数组中
-      values: [35, 45, 20], // 所有值在一个数组中
-    },
-  ],
-  {
-    x: 2,
-    y: 1,
-    w: 6,
-    h: 4,
+slide.addChart(pptx.charts.PIE, [{
+    name: "Market Share",
+    labels: ["Product A", "Product B", "Other"],  // All categories in one array
+    values: [35, 45, 20]  // All values in one array
+}], {
+    x: 2, y: 1, w: 6, h: 4,
     showPercent: true,
     showLegend: true,
-    legendPos: "r", // 右侧
-    chartColors: ["4472C4", "ED7D31", "A5A5A5"],
-  }
-);
+    legendPos: 'r',  // right
+    chartColors: ["4472C4", "ED7D31", "A5A5A5"]
+});
 ```
 
-#### 多个数据系列
+#### Multiple Data Series
 
 ```javascript
-slide.addChart(
-  pptx.charts.LINE,
-  [
+slide.addChart(pptx.charts.LINE, [
     {
-      name: "Product A",
-      labels: ["Q1", "Q2", "Q3", "Q4"],
-      values: [10, 20, 30, 40],
+        name: "Product A",
+        labels: ["Q1", "Q2", "Q3", "Q4"],
+        values: [10, 20, 30, 40]
     },
     {
-      name: "Product B",
-      labels: ["Q1", "Q2", "Q3", "Q4"],
-      values: [15, 25, 20, 35],
-    },
-  ],
-  {
-    x: 1,
-    y: 1,
-    w: 8,
-    h: 4,
+        name: "Product B",
+        labels: ["Q1", "Q2", "Q3", "Q4"],
+        values: [15, 25, 20, 35]
+    }
+], {
+    x: 1, y: 1, w: 8, h: 4,
     showCatAxisTitle: true,
-    catAxisTitle: "Quarter",
+    catAxisTitle: 'Quarter',
     showValAxisTitle: true,
-    valAxisTitle: "Revenue ($M)",
-  }
-);
+    valAxisTitle: 'Revenue ($M)'
+});
 ```
 
-### 图表颜色
+### Chart Colors
 
-**重要**：使用**不带 `#` 前缀**的十六进制颜色 - 包含 `#` 会导致文件损坏。
+**CRITICAL**: Use hex colors **without** the `#` prefix - including `#` causes file corruption.
 
-**将图表颜色与您选择的设计调色板对齐**，确保数据可视化具有足够的对比度和独特性。调整颜色以适应：
-
-- 相邻系列之间的强烈对比度
-- 幻灯片背景的可读性
-- 可访问性（避免仅使用红绿组合）
+**Align chart colors with your chosen design palette**, ensuring sufficient contrast and distinctiveness for data visualization. Adjust colors for:
+- Strong contrast between adjacent series
+- Readability against slide backgrounds
+- Accessibility (avoid red-green only combinations)
 
 ```javascript
-// 示例：海洋调色板启发的图表颜色（调整以获得对比度）
+// Example: Ocean palette-inspired chart colors (adjusted for contrast)
 const chartColors = ["16A085", "FF6B9D", "2C3E50", "F39C12", "9B59B6"];
 
-// 单系列图表：所有条形图/点使用一种颜色
-slide.addChart(
-  pptx.charts.BAR,
-  [
-    {
-      name: "Sales",
-      labels: ["Q1", "Q2", "Q3", "Q4"],
-      values: [4500, 5500, 6200, 7100],
-    },
-  ],
-  {
+// Single-series chart: Use one color for all bars/points
+slide.addChart(pptx.charts.BAR, [{
+    name: "Sales",
+    labels: ["Q1", "Q2", "Q3", "Q4"],
+    values: [4500, 5500, 6200, 7100]
+}], {
     ...placeholders[0],
-    chartColors: ["16A085"], // 所有条形图使用相同颜色
-    showLegend: false,
-  }
-);
+    chartColors: ["16A085"],  // All bars same color
+    showLegend: false
+});
 
-// 多系列图表：每个系列使用不同颜色
-slide.addChart(
-  pptx.charts.LINE,
-  [
+// Multi-series chart: Each series gets a different color
+slide.addChart(pptx.charts.LINE, [
     { name: "Product A", labels: ["Q1", "Q2", "Q3"], values: [10, 20, 30] },
-    { name: "Product B", labels: ["Q1", "Q2", "Q3"], values: [15, 25, 20] },
-  ],
-  {
+    { name: "Product B", labels: ["Q1", "Q2", "Q3"], values: [15, 25, 20] }
+], {
     ...placeholders[0],
-    chartColors: ["16A085", "FF6B9D"], // 每个系列一种颜色
-  }
-);
+    chartColors: ["16A085", "FF6B9D"]  // One color per series
+});
 ```
 
-### 添加表格
+### Adding Tables
 
-可以添加基本或高级格式的表格：
+Tables can be added with basic or advanced formatting:
 
-#### 基本表格
+#### Basic Table
 
 ```javascript
-slide.addTable(
-  [
+slide.addTable([
     ["Header 1", "Header 2", "Header 3"],
     ["Row 1, Col 1", "Row 1, Col 2", "Row 1, Col 3"],
-    ["Row 2, Col 1", "Row 2, Col 2", "Row 2, Col 3"],
-  ],
-  {
+    ["Row 2, Col 1", "Row 2, Col 2", "Row 2, Col 3"]
+], {
     x: 0.5,
     y: 1,
     w: 9,
     h: 3,
     border: { pt: 1, color: "999999" },
-    fill: { color: "F1F1F1" },
-  }
-);
+    fill: { color: "F1F1F1" }
+});
 ```
 
-#### 带自定义格式的表格
+#### Table with Custom Formatting
 
 ```javascript
 const tableData = [
-  // 带自定义样式的标题行
-  [
-    {
-      text: "Product",
-      options: { fill: { color: "4472C4" }, color: "FFFFFF", bold: true },
-    },
-    {
-      text: "Revenue",
-      options: { fill: { color: "4472C4" }, color: "FFFFFF", bold: true },
-    },
-    {
-      text: "Growth",
-      options: { fill: { color: "4472C4" }, color: "FFFFFF", bold: true },
-    },
-  ],
-  // 数据行
-  ["Product A", "$50M", "+15%"],
-  ["Product B", "$35M", "+22%"],
-  ["Product C", "$28M", "+8%"],
+    // Header row with custom styling
+    [
+        { text: "Product", options: { fill: { color: "4472C4" }, color: "FFFFFF", bold: true } },
+        { text: "Revenue", options: { fill: { color: "4472C4" }, color: "FFFFFF", bold: true } },
+        { text: "Growth", options: { fill: { color: "4472C4" }, color: "FFFFFF", bold: true } }
+    ],
+    // Data rows
+    ["Product A", "$50M", "+15%"],
+    ["Product B", "$35M", "+22%"],
+    ["Product C", "$28M", "+8%"]
 ];
 
 slide.addTable(tableData, {
-  x: 1,
-  y: 1.5,
-  w: 8,
-  h: 3,
-  colW: [3, 2.5, 2.5], // 列宽
-  rowH: [0.5, 0.6, 0.6, 0.6], // 行高
-  border: { pt: 1, color: "CCCCCC" },
-  align: "center",
-  valign: "middle",
-  fontSize: 14,
+    x: 1,
+    y: 1.5,
+    w: 8,
+    h: 3,
+    colW: [3, 2.5, 2.5],  // Column widths
+    rowH: [0.5, 0.6, 0.6, 0.6],  // Row heights
+    border: { pt: 1, color: "CCCCCC" },
+    align: "center",
+    valign: "middle",
+    fontSize: 14
 });
 ```
 
-#### 带合并单元格的表格
+#### Table with Merged Cells
 
 ```javascript
 const mergedTableData = [
-  [
-    {
-      text: "Q1 Results",
-      options: {
-        colspan: 3,
-        fill: { color: "4472C4" },
-        color: "FFFFFF",
-        bold: true,
-      },
-    },
-  ],
-  ["Product", "Sales", "Market Share"],
-  ["Product A", "$25M", "35%"],
-  ["Product B", "$18M", "25%"],
+    [
+        { text: "Q1 Results", options: { colspan: 3, fill: { color: "4472C4" }, color: "FFFFFF", bold: true } }
+    ],
+    ["Product", "Sales", "Market Share"],
+    ["Product A", "$25M", "35%"],
+    ["Product B", "$18M", "25%"]
 ];
 
 slide.addTable(mergedTableData, {
-  x: 1,
-  y: 1,
-  w: 8,
-  h: 2.5,
-  colW: [3, 2.5, 2.5],
-  border: { pt: 1, color: "DDDDDD" },
+    x: 1,
+    y: 1,
+    w: 8,
+    h: 2.5,
+    colW: [3, 2.5, 2.5],
+    border: { pt: 1, color: "DDDDDD" }
 });
 ```
 
-### 表格选项
+### Table Options
 
-常见表格选项：
-
-- `x, y, w, h` - 位置和大小
-- `colW` - 列宽数组（以英寸为单位）
-- `rowH` - 行高数组（以英寸为单位）
-- `border` - 边框样式：`{ pt: 1, color: "999999" }`
-- `fill` - 背景颜色（不带 # 前缀）
-- `align` - 文本对齐："left", "center", "right"
-- `valign` - 垂直对齐："top", "middle", "bottom"
-- `fontSize` - 文本大小
-- `autoPage` - 如果内容溢出，自动创建新幻灯片
+Common table options:
+- `x, y, w, h` - Position and size
+- `colW` - Array of column widths (in inches)
+- `rowH` - Array of row heights (in inches)
+- `border` - Border style: `{ pt: 1, color: "999999" }`
+- `fill` - Background color (no # prefix)
+- `align` - Text alignment: "left", "center", "right"
+- `valign` - Vertical alignment: "top", "middle", "bottom"
+- `fontSize` - Text size
+- `autoPage` - Auto-create new slides if content overflows

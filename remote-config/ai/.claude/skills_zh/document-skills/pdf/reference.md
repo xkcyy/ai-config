@@ -1,42 +1,39 @@
-# PDF 处理高级参考
+# PDF Processing Advanced 参考
 
-本文档包含高级 PDF 处理功能、详细示例和主技能说明中未涵盖的其他库。
+This document contains advanced PDF processing features, detailed examples, and additional libraries not covered in the main skill instructions.
 
-## pypdfium2 库（Apache/BSD 许可证）
+## pypdfium2 Library (Apache/BSD 许可证)
 
-### 概述
+### Overview
+pypdfium2 is a Python binding for PDFium (Chromium's PDF library). It's excellent for fast PDF rendering, image generation, and serves as a PyMuPDF replacement.
 
-pypdfium2 是 PDFium（Chromium 的 PDF 库）的 Python 绑定。它非常适合快速 PDF 渲染、图像生成，并可作为 PyMuPDF 的替代品。
-
-### 将 PDF 渲染为图像
-
+### Render PDF to Images
 ```python
 import pypdfium2 as pdfium
 from PIL import Image
 
-# 加载PDF
+# Load PDF
 pdf = pdfium.PdfDocument("document.pdf")
 
-# 将页面渲染为图像
-page = pdf[0]  # 第一页
+# Render page to image
+page = pdf[0]  # First page
 bitmap = page.render(
-    scale=2.0,  # 更高分辨率
-    rotation=0  # 无旋转
+    scale=2.0,  # Higher resolution
+    rotation=0  # No rotation
 )
 
-# 转换为PIL图像
+# Convert to PIL Image
 img = bitmap.to_pil()
 img.save("page_1.png", "PNG")
 
-# 处理多个页面
+# Process multiple pages
 for i, page in enumerate(pdf):
     bitmap = page.render(scale=1.5)
     img = bitmap.to_pil()
     img.save(f"page_{i+1}.jpg", "JPEG", quality=90)
 ```
 
-### 使用 pypdfium2 提取文本
-
+### Extract Text with pypdfium2
 ```python
 import pypdfium2 as pdfium
 
@@ -46,344 +43,332 @@ for i, page in enumerate(pdf):
     print(f"Page {i+1} text length: {len(text)} chars")
 ```
 
-## JavaScript 库
+## JavaScript Libraries
 
-### pdf-lib（MIT 许可证）
+### pdf-lib (MIT 许可证)
 
-pdf-lib 是一个功能强大的 JavaScript 库，用于在任何 JavaScript 环境中创建和修改 PDF 文档。
+pdf-lib is a powerful JavaScript library for creating and modifying PDF documents in any JavaScript environment.
 
-#### 加载和操作现有 PDF
-
+#### Load and Manipulate Existing PDF
 ```javascript
-import { PDFDocument } from "pdf-lib";
-import fs from "fs";
+import { PDFDocument } from 'pdf-lib';
+import fs from 'fs';
 
 async function manipulatePDF() {
-  // 加载现有PDF
-  const existingPdfBytes = fs.readFileSync("input.pdf");
-  const pdfDoc = await PDFDocument.load(existingPdfBytes);
+    // Load existing PDF
+    const existingPdfBytes = fs.readFile同步('input.pdf');
+    const pdfDoc = await PDFDocument.load(existingPdfBytes);
 
-  // 获取页数
-  const pageCount = pdfDoc.getPageCount();
-  console.log(`Document has ${pageCount} pages`);
+    // Get page count
+    const pageCount = pdfDoc.getPageCount();
+    console.log(`Document has ${pageCount} pages`);
 
-  // 添加新页面
-  const newPage = pdfDoc.addPage([600, 400]);
-  newPage.drawText("Added by pdf-lib", {
-    x: 100,
-    y: 300,
-    size: 16,
-  });
+    // Add new page
+    const newPage = pdfDoc.addPage([600, 400]);
+    newPage.drawText('Added by pdf-lib', {
+        x: 100,
+        y: 300,
+        size: 16
+    });
 
-  // 保存修改后的PDF
-  const pdfBytes = await pdfDoc.save();
-  fs.writeFileSync("modified.pdf", pdfBytes);
+    // Save modified PDF
+    const pdfBytes = await pdfDoc.save();
+    fs.writeFile同步('modified.pdf', pdfBytes);
 }
 ```
 
-#### 从头创建复杂 PDF
-
+#### Create Complex PDFs from Scratch
 ```javascript
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import fs from "fs";
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import fs from 'fs';
 
 async function createPDF() {
-  const pdfDoc = await PDFDocument.create();
+    const pdfDoc = await PDFDocument.create();
 
-  // 添加字体
-  const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    // Add fonts
+    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  // 添加页面
-  const page = pdfDoc.addPage([595, 842]); // A4尺寸
-  const { width, height } = page.getSize();
+    // Add page
+    const page = pdfDoc.addPage([595, 842]); // A4 size
+    const { width, height } = page.getSize();
 
-  // 添加带样式的文本
-  page.drawText("Invoice #12345", {
-    x: 50,
-    y: height - 50,
-    size: 18,
-    font: helveticaBold,
-    color: rgb(0.2, 0.2, 0.8),
-  });
-
-  // 添加矩形（页眉背景）
-  page.drawRectangle({
-    x: 40,
-    y: height - 100,
-    width: width - 80,
-    height: 30,
-    color: rgb(0.9, 0.9, 0.9),
-  });
-
-  // 添加表格状内容
-  const items = [
-    ["Item", "Qty", "Price", "Total"],
-    ["Widget", "2", "$50", "$100"],
-    ["Gadget", "1", "$75", "$75"],
-  ];
-
-  let yPos = height - 150;
-  items.forEach((row) => {
-    let xPos = 50;
-    row.forEach((cell) => {
-      page.drawText(cell, {
-        x: xPos,
-        y: yPos,
-        size: 12,
-        font: helveticaFont,
-      });
-      xPos += 120;
+    // Add text with styling
+    page.drawText('Invoice #12345', {
+        x: 50,
+        y: height - 50,
+        size: 18,
+        font: helveticaBold,
+        color: rgb(0.2, 0.2, 0.8)
     });
-    yPos -= 25;
-  });
 
-  const pdfBytes = await pdfDoc.save();
-  fs.writeFileSync("created.pdf", pdfBytes);
+    // Add rectangle (header background)
+    page.drawRectangle({
+        x: 40,
+        y: height - 100,
+        width: width - 80,
+        height: 30,
+        color: rgb(0.9, 0.9, 0.9)
+    });
+
+    // Add table-like content
+    const items = [
+        ['Item', 'Qty', 'Price', 'Total'],
+        ['Widget', '2', '$50', '$100'],
+        ['Gadget', '1', '$75', '$75']
+    ];
+
+    let yPos = height - 150;
+    items.forEach(row => {
+        let xPos = 50;
+        row.forEach(cell => {
+            page.drawText(cell, {
+                x: xPos,
+                y: yPos,
+                size: 12,
+                font: helveticaFont
+            });
+            xPos += 120;
+        });
+        yPos -= 25;
+    });
+
+    const pdfBytes = await pdfDoc.save();
+    fs.writeFile同步('created.pdf', pdfBytes);
 }
 ```
 
-#### 高级合并和拆分操作
-
+#### Advanced Merge and Split Operations
 ```javascript
-import { PDFDocument } from "pdf-lib";
-import fs from "fs";
+import { PDFDocument } from 'pdf-lib';
+import fs from 'fs';
 
 async function mergePDFs() {
-  // 创建新文档
-  const mergedPdf = await PDFDocument.create();
+    // Create new document
+    const mergedPdf = await PDFDocument.create();
 
-  // 加载源PDF
-  const pdf1Bytes = fs.readFileSync("doc1.pdf");
-  const pdf2Bytes = fs.readFileSync("doc2.pdf");
+    // Load source PDFs
+    const pdf1Bytes = fs.readFile同步('doc1.pdf');
+    const pdf2Bytes = fs.readFile同步('doc2.pdf');
 
-  const pdf1 = await PDFDocument.load(pdf1Bytes);
-  const pdf2 = await PDFDocument.load(pdf2Bytes);
+    const pdf1 = await PDFDocument.load(pdf1Bytes);
+    const pdf2 = await PDFDocument.load(pdf2Bytes);
 
-  // 复制第一个PDF的页面
-  const pdf1Pages = await mergedPdf.copyPages(pdf1, pdf1.getPageIndices());
-  pdf1Pages.forEach((page) => mergedPdf.addPage(page));
+    // Copy pages from first PDF
+    const pdf1Pages = await mergedPdf.copyPages(pdf1, pdf1.getPageIndices());
+    pdf1Pages.forEach(page => mergedPdf.addPage(page));
 
-  // 复制第二个PDF的特定页面（第0、2、4页）
-  const pdf2Pages = await mergedPdf.copyPages(pdf2, [0, 2, 4]);
-  pdf2Pages.forEach((page) => mergedPdf.addPage(page));
+    // Copy specific pages from second PDF (pages 0, 2, 4)
+    const pdf2Pages = await mergedPdf.copyPages(pdf2, [0, 2, 4]);
+    pdf2Pages.forEach(page => mergedPdf.addPage(page));
 
-  const mergedPdfBytes = await mergedPdf.save();
-  fs.writeFileSync("merged.pdf", mergedPdfBytes);
+    const mergedPdfBytes = await mergedPdf.save();
+    fs.writeFile同步('merged.pdf', mergedPdfBytes);
 }
 ```
 
-### pdfjs-dist（Apache 许可证）
+### pdfjs-dist (Apache 许可证)
 
-PDF.js 是 Mozilla 的 JavaScript 库，用于在浏览器中渲染 PDF。
+PDF.js is Mozilla's JavaScript library for rendering PDFs in the browser.
 
-#### 基本 PDF 加载和渲染
-
+#### Basic PDF Loading and Rendering
 ```javascript
-import * as pdfjsLib from "pdfjs-dist";
+import * as pdfjsLib from 'pdfjs-dist';
 
-// 配置worker（对性能很重要）
-pdfjsLib.GlobalWorkerOptions.workerSrc = "./pdf.worker.js";
+// Configure worker (important for performance)
+pdfjsLib.GlobalWorkerOptions.workerSrc = './pdf.worker.js';
 
 async function renderPDF() {
-  // 加载PDF
-  const loadingTask = pdfjsLib.getDocument("document.pdf");
-  const pdf = await loadingTask.promise;
+    // Load PDF
+    const loadingTask = pdfjsLib.getDocument('document.pdf');
+    const pdf = await loadingTask.promise;
 
-  console.log(`Loaded PDF with ${pdf.numPages} pages`);
+    console.log(`Loaded PDF with ${pdf.numPages} pages`);
 
-  // 获取第一页
-  const page = await pdf.getPage(1);
-  const viewport = page.getViewport({ scale: 1.5 });
+    // Get first page
+    const page = await pdf.getPage(1);
+    const viewport = page.getViewport({ scale: 1.5 });
 
-  // 渲染到canvas
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
-  canvas.height = viewport.height;
-  canvas.width = viewport.width;
+    // Render to canvas
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
 
-  const renderContext = {
-    canvasContext: context,
-    viewport: viewport,
-  };
+    const renderContext = {
+        canvasContext: context,
+        viewport: viewport
+    };
 
-  await page.render(renderContext).promise;
-  document.body.appendChild(canvas);
+    await page.render(renderContext).promise;
+    document.body.appendChild(canvas);
 }
 ```
 
-#### 提取带坐标的文本
-
+#### Extract Text with Coordinates
 ```javascript
-import * as pdfjsLib from "pdfjs-dist";
+import * as pdfjsLib from 'pdfjs-dist';
 
 async function extractText() {
-  const loadingTask = pdfjsLib.getDocument("document.pdf");
-  const pdf = await loadingTask.promise;
+    const loadingTask = pdfjsLib.getDocument('document.pdf');
+    const pdf = await loadingTask.promise;
 
-  let fullText = "";
+    let fullText = '';
 
-  // 从所有页面提取文本
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const textContent = await page.getTextContent();
+    // Extract text from all pages
+    for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
 
-    const pageText = textContent.items.map((item) => item.str).join(" ");
+        const pageText = textContent.items
+            .map(item => item.str)
+            .join(' ');
 
-    fullText += `\n--- Page ${i} ---\n${pageText}`;
+        fullText += `\n--- Page ${i} ---\n${pageText}`;
 
-    // 获取带坐标的文本用于高级处理
-    const textWithCoords = textContent.items.map((item) => ({
-      text: item.str,
-      x: item.transform[4],
-      y: item.transform[5],
-      width: item.width,
-      height: item.height,
-    }));
-  }
+        // Get text with coordinates for advanced processing
+        const textWithCoords = textContent.items.map(item => ({
+            text: item.str,
+            x: item.transform[4],
+            y: item.transform[5],
+            width: item.width,
+            height: item.height
+        }));
+    }
 
-  console.log(fullText);
-  return fullText;
+    console.log(fullText);
+    return fullText;
 }
 ```
 
-#### 提取注释和表单
-
+#### Extract Annotations and 表单
 ```javascript
-import * as pdfjsLib from "pdfjs-dist";
+import * as pdfjsLib from 'pdfjs-dist';
 
 async function extractAnnotations() {
-  const loadingTask = pdfjsLib.getDocument("annotated.pdf");
-  const pdf = await loadingTask.promise;
+    const loadingTask = pdfjsLib.getDocument('annotated.pdf');
+    const pdf = await loadingTask.promise;
 
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const annotations = await page.getAnnotations();
+    for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const annotations = await page.getAnnotations();
 
-    annotations.forEach((annotation) => {
-      console.log(`Annotation type: ${annotation.subtype}`);
-      console.log(`Content: ${annotation.contents}`);
-      console.log(`Coordinates: ${JSON.stringify(annotation.rect)}`);
-    });
-  }
+        annotations.forEach(annotation => {
+            console.log(`Annotation type: ${annotation.subtype}`);
+            console.log(`Content: ${annotation.contents}`);
+            console.log(`Coordinates: ${JSON.stringify(annotation.rect)}`);
+        });
+    }
 }
 ```
 
-## 高级命令行操作
+## Advanced Command-Line Operations
 
-### poppler-utils 高级功能
+### poppler-utils Advanced Features
 
-#### 提取带边界框坐标的文本
-
+#### Extract Text with Bounding Box Coordinates
 ```bash
-# 提取带边界框坐标的文本（对结构化数据至关重要）
+# Extract text with bounding box coordinates (essential for structured data)
 pdftotext -bbox-layout document.pdf output.xml
 
-# XML输出包含每个文本元素的精确坐标
+# The XML output contains precise coordinates for each text element
 ```
 
-#### 高级图像转换
-
+#### Advanced Image Conversion
 ```bash
-# 转换为特定分辨率的PNG图像
+# Convert to PNG images with specific resolution
 pdftoppm -png -r 300 document.pdf output_prefix
 
-# 转换特定页面范围，使用高分辨率
+# Convert specific page range with high resolution
 pdftoppm -png -r 600 -f 1 -l 3 document.pdf high_res_pages
 
-# 转换为JPEG并设置质量
+# Convert to JPEG with quality setting
 pdftoppm -jpeg -jpegopt quality=85 -r 200 document.pdf jpeg_output
 ```
 
-#### 提取嵌入图像
-
+#### Extract Embedded Images
 ```bash
-# 提取所有带元数据的嵌入图像
+# Extract all embedded images with metadata
 pdfimages -j -p document.pdf page_images
 
-# 列出图像信息而不提取
+# List image info without extracting
 pdfimages -list document.pdf
 
-# 提取原始格式的图像
+# Extract images in their original format
 pdfimages -all document.pdf images/img
 ```
 
-### qpdf 高级功能
+### qpdf Advanced Features
 
-#### 复杂页面操作
-
+#### Complex Page Manipulation
 ```bash
-# 将PDF拆分为页面组
+# Split PDF into groups of pages
 qpdf --split-pages=3 input.pdf output_group_%02d.pdf
 
-# 提取具有复杂范围的特定页面
+# Extract specific pages with complex ranges
 qpdf input.pdf --pages input.pdf 1,3-5,8,10-end -- extracted.pdf
 
-# 合并多个PDF的特定页面
+# Merge specific pages from multiple PDFs
 qpdf --empty --pages doc1.pdf 1-3 doc2.pdf 5-7 doc3.pdf 2,4 -- combined.pdf
 ```
 
-#### PDF 优化和修复
-
+#### PDF Optimization and Repair
 ```bash
-# 优化PDF用于Web（线性化用于流式传输）
+# Optimize PDF for web (linearize for streaming)
 qpdf --linearize input.pdf optimized.pdf
 
-# 删除未使用的对象并压缩
+# Remove unused objects and compress
 qpdf --optimize-level=all input.pdf compressed.pdf
 
-# 尝试修复损坏的PDF结构
+# Attempt to repair corrupted PDF structure
 qpdf --check input.pdf
 qpdf --fix-qdf damaged.pdf repaired.pdf
 
-# 显示详细的PDF结构用于调试
+# Show detailed PDF structure for debugging
 qpdf --show-all-pages input.pdf > structure.txt
 ```
 
-#### 高级加密
-
+#### Advanced Encryption
 ```bash
-# 添加具有特定权限的密码保护
+# Add password protection with specific permissions
 qpdf --encrypt user_pass owner_pass 256 --print=none --modify=none -- input.pdf encrypted.pdf
 
-# 检查加密状态
+# Check encryption status
 qpdf --show-encryption encrypted.pdf
 
-# 移除密码保护（需要密码）
+# Remove password protection (requires password)
 qpdf --password=secret123 --decrypt encrypted.pdf decrypted.pdf
 ```
 
-## 高级 Python 技术
+## Advanced Python Techniques
 
-### pdfplumber 高级功能
+### pdfplumber Advanced Features
 
-#### 提取带精确坐标的文本
-
+#### Extract Text with Precise Coordinates
 ```python
 import pdfplumber
 
 with pdfplumber.open("document.pdf") as pdf:
     page = pdf.pages[0]
-
-    # 提取所有带坐标的文本
+    
+    # Extract all text with coordinates
     chars = page.chars
-    for char in chars[:10]:  # 前10个字符
+    for char in chars[:10]:  # First 10 characters
         print(f"Char: '{char['text']}' at x:{char['x0']:.1f} y:{char['y0']:.1f}")
-
-    # 按边界框提取文本（左、上、右、下）
+    
+    # Extract text by bounding box (left, top, right, bottom)
     bbox_text = page.within_bbox((100, 100, 400, 200)).extract_text()
 ```
 
-#### 使用自定义设置的高级表格提取
-
+#### Advanced Table Extraction with Custom Settings
 ```python
 import pdfplumber
 import pandas as pd
 
 with pdfplumber.open("complex_table.pdf") as pdf:
     page = pdf.pages[0]
-
-    # 使用自定义设置提取复杂布局的表格
+    
+    # Extract tables with custom settings for complex layouts
     table_settings = {
         "vertical_strategy": "lines",
         "horizontal_strategy": "lines",
@@ -391,38 +376,37 @@ with pdfplumber.open("complex_table.pdf") as pdf:
         "intersection_tolerance": 15
     }
     tables = page.extract_tables(table_settings)
-
-    # 表格提取的可视化调试
+    
+    # Visual debugging for table extraction
     img = page.to_image(resolution=150)
     img.save("debug_layout.png")
 ```
 
-### reportlab 高级功能
+### reportlab Advanced Features
 
-#### 创建带表格的专业报告
-
+#### Create Professional Reports with Tables
 ```python
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 
-# 示例数据
+# Sample data
 data = [
     ['Product', 'Q1', 'Q2', 'Q3', 'Q4'],
     ['Widgets', '120', '135', '142', '158'],
     ['Gadgets', '85', '92', '98', '105']
 ]
 
-# 创建带表格的PDF
+# Create PDF with table
 doc = SimpleDocTemplate("report.pdf")
 elements = []
 
-# 添加标题
+# Add title
 styles = getSampleStyleSheet()
 title = Paragraph("Quarterly Sales Report", styles['Title'])
 elements.append(title)
 
-# 添加带高级样式的表格
+# Add table with advanced styling
 table = Table(data)
 table.setStyle(TableStyle([
     ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
@@ -439,19 +423,17 @@ elements.append(table)
 doc.build(elements)
 ```
 
-## 复杂工作流程
+## Complex 工作流程s
 
-### 从 PDF 中提取图表/图像
+### Extract Figures/Images from PDF
 
-#### 方法 1：使用 pdfimages（最快）
-
+#### Method 1: Using pdfimages (fastest)
 ```bash
-# 提取所有原始质量的图像
+# Extract all images with original quality
 pdfimages -all document.pdf images/img
 ```
 
-#### 方法 2：使用 pypdfium2 + 图像处理
-
+#### Method 2: Using pypdfium2 + Image Processing
 ```python
 import pypdfium2 as pdfium
 from PIL import Image
@@ -459,27 +441,26 @@ import numpy as np
 
 def extract_figures(pdf_path, output_dir):
     pdf = pdfium.PdfDocument(pdf_path)
-
+    
     for page_num, page in enumerate(pdf):
-        # 渲染高分辨率页面
+        # Render high-resolution page
         bitmap = page.render(scale=3.0)
         img = bitmap.to_pil()
-
-        # 转换为numpy用于处理
+        
+        # Convert to numpy for processing
         img_array = np.array(img)
-
-        # 简单的图表检测（非白色区域）
+        
+        # Simple figure detection (non-white regions)
         mask = np.any(img_array != [255, 255, 255], axis=2)
-
-        # 查找轮廓并提取边界框
-        # （这是简化版 - 实际实现需要更复杂的检测）
-
-        # 保存检测到的图表
-        # ... 实现取决于具体需求
+        
+        # Find contours and extract bounding boxes
+        # (This is simplified - real implementation would need more sophisticated detection)
+        
+        # Save detected figures
+        # ... implementation depends on specific needs
 ```
 
-### 批量 PDF 处理
-
+### Batch PDF Processing with Error Handling
 ```python
 import os
 import glob
@@ -491,7 +472,7 @@ logger = logging.getLogger(__name__)
 
 def batch_process_pdfs(input_dir, operation='merge'):
     pdf_files = glob.glob(os.path.join(input_dir, "*.pdf"))
-
+    
     if operation == 'merge':
         writer = PdfWriter()
         for pdf_file in pdf_files:
@@ -503,10 +484,10 @@ def batch_process_pdfs(input_dir, operation='merge'):
             except Exception as e:
                 logger.error(f"Failed to process {pdf_file}: {e}")
                 continue
-
+        
         with open("batch_merged.pdf", "wb") as output:
             writer.write(output)
-
+    
     elif operation == 'extract_text':
         for pdf_file in pdf_files:
             try:
@@ -514,26 +495,25 @@ def batch_process_pdfs(input_dir, operation='merge'):
                 text = ""
                 for page in reader.pages:
                     text += page.extract_text()
-
+                
                 output_file = pdf_file.replace('.pdf', '.txt')
                 with open(output_file, 'w', encoding='utf-8') as f:
                     f.write(text)
                 logger.info(f"Extracted text from: {pdf_file}")
-
+                
             except Exception as e:
                 logger.error(f"Failed to extract text from {pdf_file}: {e}")
                 continue
 ```
 
-### 高级 PDF 裁剪
-
+### Advanced PDF Cropping
 ```python
 from pypdf import PdfWriter, PdfReader
 
 reader = PdfReader("input.pdf")
 writer = PdfWriter()
 
-# 裁剪页面（左、下、右、上，单位为点）
+# Crop page (left, bottom, right, top in points)
 page = reader.pages[0]
 page.mediabox.left = 50
 page.mediabox.bottom = 50
@@ -545,56 +525,50 @@ with open("cropped.pdf", "wb") as output:
     writer.write(output)
 ```
 
-## 性能优化提示
+## Performance Optimization Tips
 
-### 1. 对于大型 PDF
+### 1. For Large PDFs
+- Use streaming approaches instead of loading entire PDF in memory
+- Use `qpdf --split-pages` for splitting large files
+- Process pages individually with pypdfium2
 
-- 使用流式方法而不是将整个 PDF 加载到内存中
-- 使用`qpdf --split-pages`拆分大文件
-- 使用 pypdfium2 单独处理页面
+### 2. For Text Extraction
+- `pdftotext -bbox-layout` is fastest for plain text extraction
+- Use pdfplumber for structured data and tables
+- Avoid `pypdf.extract_text()` for very large documents
 
-### 2. 对于文本提取
+### 3. For Image Extraction
+- `pdfimages` is much faster than rendering pages
+- Use low resolution for previews, high resolution for final output
 
-- `pdftotext -bbox-layout`是纯文本提取最快的方法
-- 使用 pdfplumber 处理结构化数据和表格
-- 对于非常大的文档，避免使用`pypdf.extract_text()`
+### 4. For Form Filling
+- pdf-lib maintains form structure better than most alternatives
+- Pre-validate form fields before processing
 
-### 3. 对于图像提取
-
-- `pdfimages`比渲染页面快得多
-- 预览使用低分辨率，最终输出使用高分辨率
-
-### 4. 对于表单填写
-
-- pdf-lib 比大多数替代方案更好地保持表单结构
-- 处理前预验证表单字段
-
-### 5. 内存管理
-
+### 5. Memory Management
 ```python
-# 分块处理PDF
+# Process PDFs in chunks
 def process_large_pdf(pdf_path, chunk_size=10):
     reader = PdfReader(pdf_path)
     total_pages = len(reader.pages)
-
+    
     for start_idx in range(0, total_pages, chunk_size):
         end_idx = min(start_idx + chunk_size, total_pages)
         writer = PdfWriter()
-
+        
         for i in range(start_idx, end_idx):
             writer.add_page(reader.pages[i])
-
-        # 处理块
+        
+        # Process chunk
         with open(f"chunk_{start_idx//chunk_size}.pdf", "wb") as output:
             writer.write(output)
 ```
 
-## 常见问题故障排除
+## Troubleshooting Common Issues
 
-### 加密 PDF
-
+### Encrypted PDFs
 ```python
-# 处理受密码保护的PDF
+# Handle password-protected PDFs
 from pypdf import PdfReader
 
 try:
@@ -605,18 +579,16 @@ except Exception as e:
     print(f"Failed to decrypt: {e}")
 ```
 
-### 损坏的 PDF
-
+### Corrupted PDFs
 ```bash
-# 使用qpdf修复
+# Use qpdf to repair
 qpdf --check corrupted.pdf
 qpdf --replace-input corrupted.pdf
 ```
 
-### 文本提取问题
-
+### Text Extraction Issues
 ```python
-# 对扫描的PDF使用OCR作为后备方案
+# Fallback to OCR for scanned PDFs
 import pytesseract
 from pdf2image import convert_from_path
 
@@ -628,7 +600,7 @@ def extract_text_with_ocr(pdf_path):
     return text
 ```
 
-## 许可证信息
+## 许可证 Information
 
 - **pypdf**: BSD 许可证
 - **pdfplumber**: MIT 许可证
