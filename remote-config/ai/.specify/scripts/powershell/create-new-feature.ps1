@@ -5,7 +5,8 @@ param(
     [switch]$Json,
     [string]$ShortName,
     [int]$Number = 0,
-    [switch]$Help,
+[switch]$Help,
+[switch]$SkipBranch,
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]]$FeatureDescription
 )
@@ -241,12 +242,16 @@ if ($branchName.Length -gt $maxBranchLength) {
     Write-Warning "[specify] Truncated to: $branchName ($($branchName.Length) bytes)"
 }
 
-if ($hasGit) {
+$branchCreated = $false
+if (-not $SkipBranch -and $hasGit) {
     try {
         git checkout -b $branchName | Out-Null
+        if ($LASTEXITCODE -eq 0) { $branchCreated = $true }
     } catch {
         Write-Warning "Failed to create git branch: $branchName"
     }
+} elseif ($SkipBranch) {
+    Write-Verbose "[specify] SkipBranch set; not creating git branch for $branchName"
 } else {
     Write-Warning "[specify] Warning: Git repository not detected; skipped branch creation for $branchName"
 }
@@ -271,6 +276,8 @@ if ($Json) {
         SPEC_FILE = $specFile
         FEATURE_NUM = $featureNum
         HAS_GIT = $hasGit
+        BRANCH_CREATED = $branchCreated
+        SKIPPED_BRANCH = [bool]$SkipBranch
     }
     $obj | ConvertTo-Json -Compress
 } else {
@@ -278,6 +285,8 @@ if ($Json) {
     Write-Output "SPEC_FILE: $specFile"
     Write-Output "FEATURE_NUM: $featureNum"
     Write-Output "HAS_GIT: $hasGit"
+    Write-Output "BRANCH_CREATED: $branchCreated"
+    Write-Output "SKIPPED_BRANCH: $SkipBranch"
     Write-Output "SPECIFY_FEATURE environment variable set to: $branchName"
 }
 
