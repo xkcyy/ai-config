@@ -1,0 +1,48 @@
+---
+alwaysApply: true
+---
+
+# Skill Manager
+
+此规则模拟 Claude Code 的 Skill 机制，通过动态加载 `.claude/skills` 下的定义文件，赋予 AI 专门领域的知识与工作流。
+
+## 1. 技能注册表 (Registry)
+
+````json:skills_inventory
+[
+  { "name": "claude-skills-sync-to-cursor", "description": "Synchronize Claude skills to Cursor rules registry. Use when the user wants to "update skills", "sync skills", or "refresh the skill list".", "path": ".claude/skills/claude-skills-sync-to-cursor/SKILL.md" },
+  { "name": "cursor-sync", "description": "Synchronize Claude skills to Cursor rules registry. Use when the user wants to "update skills", "sync skills", or "refresh the skill list".", "path": ".claude/skills/cursor-sync/SKILL.md" },
+  { "name": "docx", "description": "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. When Claude needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks", "path": ".claude/skills/document-skills/docx/SKILL.md" },
+  { "name": "pdf", "description": "Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.", "path": ".claude/skills/document-skills/pdf/SKILL.md" },
+  { "name": "pptx", "description": "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes, or any other presentation tasks", "path": ".claude/skills/document-skills/pptx/SKILL.md" },
+  { "name": "xlsx", "description": "Comprehensive spreadsheet creation, editing, and analysis with support for formulas, formatting, data analysis, and visualization. When Claude needs to work with spreadsheets (.xlsx, .xlsm, .csv, .tsv, etc) for: (1) Creating new spreadsheets with formulas and formatting, (2) Reading or analyzing data, (3) Modify existing spreadsheets while preserving formulas, (4) Data analysis and visualization in spreadsheets, or (5) Recalculating formulas", "path": ".claude/skills/document-skills/xlsx/SKILL.md" },
+  { "name": "mcp-builder", "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).", "path": ".claude/skills/mcp-builder/SKILL.md" },
+  { "name": "skill-creator", "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.", "path": ".claude/skills/skill-creator/SKILL.md" }
+
+]```
+
+## 2. 执行协议 (Execution Protocol)
+
+当用户请求匹配上述 `description` 时，**必须**执行以下步骤：
+
+1.  **激活状态 (Activate)**:
+
+    - 回复用户：`[Skill: {name}] 正在加载能力...`
+
+2.  **注入上下文 (Inject Context)**:
+
+    - 调用 `read_file` 读取对应的 `path`。
+    - **关键**: 读取到的 `SKILL.md` 内容是**最高优先级指令**。
+
+3.  **执行任务 (Execute)**:
+    - **沉浸式扮演**: 一旦文件被读取，立即切换为该 Skill 定义的专家角色。
+    - **遵循步骤**: 严格按照 Markdown 中的章节、Step 1/2/3 或工作流指南执行。
+    - **渐进加载 (Progressive Loading)**: 如果 `SKILL.md` 引用了同目录下的其他文件（如 `references/xxx.md`）且对当前任务必要，**必须**主动使用 `read_file` 加载该引用文件。
+
+<critical_rules>
+
+- **动态加载**: 禁止凭空猜测技能内容。
+- **单一来源**: 仅使用注册表中列出的技能。
+- **引用追踪**: 遇到 `[Link](reference.md)` 形式的引用时，若内容关键，必须追踪读取。
+  </critical_rules>
+````
