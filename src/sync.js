@@ -195,7 +195,7 @@ exports.runSync = async function runSync(options) {
     const hasChanges = await hasUncommittedChanges(targetPath, Array.from(SUPPORTED_DIRECTORIES));
     if (hasChanges) {
       throw new Error(
-        'Local changes detected in .cursor/.claude. Commit or stash, or rerun with --force.'
+        'Local changes detected in .cursor/.claude/.ai/.trae/.specify. Commit or stash, or rerun with --force.'
       );
     }
   }

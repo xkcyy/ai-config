@@ -103,7 +103,7 @@ exports.runPush = async function runPush(options) {
   // Check if there are local directories to push
   const localDirs = await getExistingLocalDirs(targetPath);
   if (localDirs.length === 0) {
-    throw new Error('No local .cursor/.claude directories found. Nothing to push.');
+    throw new Error('No local .cursor/.claude/.ai/.trae/.specify directories found. Nothing to push.');
   }
 
   const remoteDirPath = normalizeRemoteDir(remoteDir);

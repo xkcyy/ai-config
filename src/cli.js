@@ -22,7 +22,7 @@ program
 // Sync command
 const syncCmd = program
   .command('sync')
-  .description('Synchronize .cursor/.claude from remote repository')
+  .description('Synchronize .cursor/.claude/.ai/.trae/.specify from remote repository')
   .option('--repo <url>', 'Remote repository URL', DEFAULT_REPO_URL)
   .option('--branch <branch>', 'Remote branch to read from', DEFAULT_BRANCH)
   .option('--ref <ref>', 'Optional git ref (branch, tag, or commit) to sync')
@@ -55,7 +55,7 @@ const syncCmd = program
 // Push command
 const pushCmd = program
   .command('push')
-  .description('Push local .cursor/.claude to the remote repository')
+  .description('Push local .cursor/.claude/.ai/.trae/.specify to the remote repository')
   .option('--repo <url>', 'Remote repository URL', DEFAULT_REPO_URL)
   .option('--branch <branch>', 'Remote branch to push to', DEFAULT_BRANCH)
   .option('--remote-dir <dir>', 'Directory inside remote repo storing configs', DEFAULT_REMOTE_DIR)
@@ -84,7 +84,7 @@ const pushCmd = program
 // Pull command
 const pullCmd = program
   .command('pull')
-  .description('Synchronize .cursor/.claude from remote repository to local')
+  .description('Synchronize .cursor/.claude/.ai/.trae/.specify from remote repository to local')
   .option('--repo <url>', 'Remote repository URL', DEFAULT_REPO_URL)
   .option('--branch <branch>', 'Remote branch to read from', DEFAULT_BRANCH)
   .option('--ref <ref>', 'Optional git ref (branch, tag, or commit) to pull')
@@ -117,7 +117,7 @@ const pullCmd = program
 // Rollback command
 const rollbackCmd = program
   .command('rollback <timestamp>')
-  .description('Restore .cursor/.claude from a previous backup')
+  .description('Restore .cursor/.claude/.ai/.trae/.specify from a previous backup')
   .option('--target <path>', 'Target project path', process.cwd())
   .option('--verbose', 'Enable verbose logging', false)
   .action(async (timestamp, options) => {

@@ -2,7 +2,7 @@
 
 ## AI Configuration Sync Tool (Node.js + TypeScript)
 
-`ai-config` is a command-line tool based on Node.js and TypeScript for synchronizing local `.cursor` and `.claude` configuration directories with remote Git repositories.
+`ai-config` is a command-line tool based on Node.js and TypeScript for synchronizing local `.cursor`, `.claude`, `.ai`, `.trae` and `.specify` configuration directories with remote Git repositories.
 
 ### Features
 
@@ -93,14 +93,14 @@ ai-config rollback 20251130-103000
 - **Default Remote**: GitHub repository `https://github.com/xkcyy/ai-config.git` `remote-config/ai/` directory
 - **Sync Process**:
   1. Clone remote repository specified branch
-  2. Read remote `remote-config/ai/.cursor/.claude` configurations
+  2. Read remote `remote-config/ai/.cursor/.claude/.ai/.trae/.specify` configurations
   3. Calculate differences with local configurations
   4. Support dry run mode to preview changes
   5. Automatically backup local configurations
   6. Overwrite local configurations with remote ones
 - **Push Process**:
   1. Clone remote repository
-  2. Completely overwrite `remote-config/ai/` with local `.cursor/.claude`
+  2. Completely overwrite `remote-config/ai/` with local `.cursor/.claude/.ai/.trae/.specify`
   3. Auto-execute git commit and git push when changes detected
   4. Need configured local Git user.name and user.email
 - **Backup & Rollback**: Backup local configurations to `.ai-config-backup/<timestamp>/` before each sync/push
