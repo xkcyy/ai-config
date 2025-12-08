@@ -11,7 +11,7 @@ handoffs:
     send: true
 ---
 
-## User Input
+## 用户输入
 
 ```text
 $ARGUMENTS
@@ -19,13 +19,13 @@ $ARGUMENTS
 
 你 **必须** 在执行前考虑用户输入（如果非空）。
 
-## Outline
+## 流程概要
 
 `/speckit.epic` 后的文本即史诗描述，视为唯一真源；除非为空，不要要求用户重复。
 
 ### 1) 准备与目录规划（独立于 feature/spec 分支）
 - 不创建/切换分支，保持当前分支。
-- 推导 2-4 词短名（动词-名词，kebab-case，保留缩写）。
+- 推导 2–4 词短名（动词-名词，kebab-case，保留缩写）。
 - 史诗目录根：`spec-epics/`（若不存在则创建）。
 - 编号规则：在 `spec-epics/` 下查找 `E###-<short-name>`，取最大号+1，若无则 `E001`。短名仅用于查重提示，不与 specs 目录/分支混用。
 - 创建 `spec-epics/E###-<short-name>/` 作为本次史诗目录。
@@ -53,7 +53,7 @@ $ARGUMENTS
   - 依赖（内/外）
   - 风险与缓解（特别是跨系统/跨阶段风险）
   - 迭代里程碑/指标（可包含端到端漏斗或阶段转化指标）
-- 在 `iteration-plan.md` 内增加“Specify 队列”小节，而非独立文件：
+- 在 `iteration-plan.md` 内增加 “Specify 队列” 小节，而非独立文件：
   - 为每个迭代生成 `/speckit.specify` 输入草稿（推荐短名、描述、成功标准骨架、1–2 个澄清提示，澄清总数史诗范围内仍 ≤3）。
   - 队列顺序与流程顺序一致。
 
